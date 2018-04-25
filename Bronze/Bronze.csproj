@@ -45,8 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Core\InitializationException.cs" />
-    <Compile Include="src\Core\Initializer.cs" />
+    <Compile Include="src\Core\CoreException.cs" />
+    <Compile Include="src\Core\ContextInfo.cs" />
+    <Compile Include="src\Core\ContextManager.cs" />
+    <Compile Include="src\Core\ResourceManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
