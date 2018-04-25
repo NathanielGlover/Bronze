@@ -5,11 +5,11 @@ namespace Bronze.Core
 {
     public static class ContextManager
     {
-        public static GLFWwindow DefaultContext { get; }
+        internal static GLFWwindow DefaultContext { get; }
 
         public static ContextInfo DefaultContextInfo => new ContextInfo(DefaultContext);
 
-        public static GLFWwindow ActiveContext => Glfw.GetCurrentContext();
+        internal static GLFWwindow ActiveContext => Glfw.GetCurrentContext();
 
         public static event Action<ContextInfo> ContextChange;
 
@@ -62,7 +62,7 @@ namespace Bronze.Core
             SetActiveContext(DefaultContext);
         }
 
-        public static GLFWwindow CreateContext(int width, int height, string title)
+        internal static GLFWwindow CreateContext(int width, int height, string title)
         {
             Glfw.WindowHint((int) State.ContextVersionMajor, 4);
             Glfw.WindowHint((int) State.ContextVersionMinor, 1);
@@ -75,12 +75,12 @@ namespace Bronze.Core
             return context;
         }
 
-        public static void EnsureDefaultContext()
+        internal static void EnsureDefaultContext()
         {
             if(DefaultContext == null) throw new NullReferenceException("Default OpenGL context was prematurely destroyed. Please don't do that.");
         }
 
-        public static void RunInSeperateContext(Action task, GLFWwindow context)
+        internal static void RunInSeperateContext(Action task, GLFWwindow context)
         {
             var currentContext = ActiveContext;
             SetActiveContext(context);
@@ -88,14 +88,14 @@ namespace Bronze.Core
             SetActiveContext(currentContext);
         }
 
-        public static void RunInDefaultContext(Action task) => RunInSeperateContext(task, DefaultContext);
+        internal static void RunInDefaultContext(Action task) => RunInSeperateContext(task, DefaultContext);
 
-        public static void SetActiveContext(GLFWwindow context)
+        internal static void SetActiveContext(GLFWwindow context)
         {
             Glfw.MakeContextCurrent(context);
             ContextChange?.Invoke(new ContextInfo(context));
         }
 
-        public static bool IsActive(GLFWwindow context) => context == ActiveContext;
+        internal static bool IsActive(GLFWwindow context) => context == ActiveContext;
     }
 }
