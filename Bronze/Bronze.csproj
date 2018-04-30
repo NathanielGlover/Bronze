@@ -49,6 +49,8 @@
     <Compile Include="src\Core\ContextInfo.cs" />
     <Compile Include="src\Core\ContextManager.cs" />
     <Compile Include="src\Core\ResourceManager.cs" />
+    <Compile Include="src\Math\Complex\Complex.cs" />
+    <Compile Include="src\Math\Complex\ComplexD.cs" />
     <Compile Include="src\Math\Math.cs" />
     <Compile Include="src\Math\Vector\Vector2.cs" />
     <Compile Include="src\Math\Vector\Vector2D.cs" />
@@ -66,9 +68,6 @@
     <None Include="BindingGLFW.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Math\Complex" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

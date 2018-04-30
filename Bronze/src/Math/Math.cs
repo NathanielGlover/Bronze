@@ -169,5 +169,82 @@ namespace Bronze.Math
         public static double Tanh(double x) => M.Tanh(x);
 
         public static double Trim(double x) => EqualsWithTolerance(x, 0) ? 0 : x;
+
+        //---------//
+        // Complex //
+        //---------//
+
+        public static readonly Complex I = new Complex(0, 1);
+
+        public static float Abs(Complex z) => z.Magnitude;
+
+        public static Complex Acos(Complex z) => -I * Log(z + Sqrt(Pow(z, 2) - 1));
+
+        public static Complex Asin(Complex z) => -I * Log(I * z + Sqrt(1 - Pow(z, 2)));
+
+        public static Complex Atan(Complex z) => I / 2 * (Log(1 - I * z) - Log(1 + I * z));
+
+        public static Complex Cos(Complex z) => (Exp(I * z) + Exp(-I * z)) / 2;
+
+        public static Complex Cosh(Complex z) => (Exp(z) + Exp(-z)) / 2;
+
+        public static Complex Exp(Complex z) => Exp(z.Re) * (Cos(z.Im) + I * Sin(z.Im));
+
+        public static Complex Log(Complex z) => Log(z.Magnitude) + I * z.Phase;
+
+        public static Complex Log(Complex z, Complex b) => Log(z) / Log(b);
+
+        public static Complex Pow(Complex z, Complex b) => Exp(Log(z) * b);
+
+        public static Complex Sigm(Complex z) => 1 / (1 + Exp(-z));
+
+        public static Complex Sin(Complex z) => (Exp(I * z) - Exp(-I * z)) / (2 * I);
+
+        public static Complex Sinh(Complex z) => (Exp(z) - Exp(-z)) / 2;
+
+        public static Complex Sqrt(Complex z) => Pow(z, 0.5f);
+
+        public static Complex Tan(Complex z) => Sin(z) / Cos(z);
+
+        public static Complex Tanh(Complex z) => Sinh(z) / Cosh(z);
+
+        //--------------------------//
+        // Double-Precision Complex //
+        //--------------------------//
+
+        // ReSharper disable once InconsistentNaming
+        public static readonly ComplexD II = new ComplexD(0, 1);
+
+        public static double Abs(ComplexD z) => z.Magnitude;
+
+        public static ComplexD Acos(ComplexD z) => -II * Log(z + Sqrt(Pow(z, 2) - 1));
+
+        public static ComplexD Asin(ComplexD z) => -II * Log(II * z + Sqrt(1 - Pow(z, 2)));
+
+        public static ComplexD Atan(ComplexD z) => II / 2 * (Log(1 - II * z) - Log(1 + II * z));
+
+        public static ComplexD Cos(ComplexD z) => (Exp(II * z) + Exp(-II * z)) / 2;
+
+        public static ComplexD Cosh(ComplexD z) => (Exp(z) + Exp(-z)) / 2;
+
+        public static ComplexD Exp(ComplexD z) => M.Exp(z.Re) * (M.Cos(z.Im) + II * M.Sin(z.Im));
+
+        public static ComplexD Log(ComplexD z) => M.Log(z.Magnitude) + II * z.Phase;
+
+        public static ComplexD Log(ComplexD z, ComplexD b) => Log(z) / Log(b);
+
+        public static ComplexD Pow(ComplexD z, ComplexD b) => Exp(Log(z) * b);
+
+        public static ComplexD Sigm(ComplexD z) => 1 / (1 + Exp(-z));
+
+        public static ComplexD Sin(ComplexD z) => (Exp(II * z) - Exp(-II * z)) / (2 * II);
+
+        public static ComplexD Sinh(ComplexD z) => (Exp(z) - Exp(-z)) / 2;
+
+        public static ComplexD Sqrt(ComplexD z) => Pow(z, 0.5);
+
+        public static ComplexD Tan(ComplexD z) => Sin(z) / Cos(z);
+
+        public static ComplexD Tanh(ComplexD z) => Sinh(z) / Cosh(z);
     }
 }

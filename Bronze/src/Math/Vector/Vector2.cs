@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using static Bronze.Math.Math;
 
-namespace Bronze.Math
+namespace Bronze.Math 
 {
     public struct Vector2 : IEquatable<Vector2>
     {
@@ -10,13 +10,13 @@ namespace Bronze.Math
 
         public static readonly Vector2 BasisX = new Vector2 {X = 1};
 
-        public static readonly Vector2 BasisY = new Vector2 {Y = 1};
+        public static readonly Vector2 BasisY = new Vector2 {Y = 1};        
 
         public static int Size => 2;
 
         public float X { get; set; }
 
-        public float Y { get; set; }
+        public float Y { get; set; }        
 
         public float[] Values => new[] {X, Y};
 
@@ -27,7 +27,7 @@ namespace Bronze.Math
         public Vector2(float x, float y)
         {
             X = x;
-            Y = y;
+            Y = y;            
         }
 
         public Vector2 Normalize()
@@ -49,6 +49,8 @@ namespace Bronze.Math
         public Vector2 Multiply(float scalar) => new Vector2(X * scalar, Y * scalar);
 
         public bool Equals(Vector2 vec) => EqualsWithTolerance(X, vec.X) && EqualsWithTolerance(Y, vec.Y);
+        
+        public Complex ToComplex() => new Complex(X, Y);
 
         public static Vector2 operator -(Vector2 vec) => vec.Negate();
 
@@ -63,9 +65,13 @@ namespace Bronze.Math
         public static bool operator ==(Vector2 left, Vector2 right) => left.Equals(right);
 
         public static bool operator !=(Vector2 left, Vector2 right) => !(left == right);
+        
+        public static explicit operator Complex(Vector2 vec) => vec.ToComplex();
 
+        public static explicit operator ComplexD(Vector2 vec) => vec.ToComplex();
+        
         public static implicit operator Vector2D(Vector2 vec) => new Vector2D(vec.X, vec.Y);
-
+        
         public static explicit operator Vector2I(Vector2 vec) => new Vector2I((int) vec.X, (int) vec.Y);
 
         public override string ToString() => $"({Trim(X)}, {Trim(Y)})";
@@ -75,7 +81,7 @@ namespace Bronze.Math
             if(ReferenceEquals(null, obj)) return false;
             return obj is Vector2 vec && Equals(vec);
         }
-
+        
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
@@ -83,7 +89,7 @@ namespace Bronze.Math
             {
                 int hashCode = 0;
                 hashCode = (hashCode * 397) ^ X.GetHashCode();
-                hashCode = (hashCode * 397) ^ Y.GetHashCode();
+                hashCode = (hashCode * 397) ^ Y.GetHashCode();                
                 return hashCode;
             }
         }
