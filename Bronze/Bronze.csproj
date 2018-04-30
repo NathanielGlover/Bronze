@@ -50,6 +50,15 @@
     <Compile Include="src\Core\ContextManager.cs" />
     <Compile Include="src\Core\ResourceManager.cs" />
     <Compile Include="src\Math\Math.cs" />
+    <Compile Include="src\Math\Vector\Vector2.cs" />
+    <Compile Include="src\Math\Vector\Vector2D.cs" />
+    <Compile Include="src\Math\Vector\Vector2I.cs" />
+    <Compile Include="src\Math\Vector\Vector3.cs" />
+    <Compile Include="src\Math\Vector\Vector3D.cs" />
+    <Compile Include="src\Math\Vector\Vector3I.cs" />
+    <Compile Include="src\Math\Vector\Vector4.cs" />
+    <Compile Include="src\Math\Vector\Vector4D.cs" />
+    <Compile Include="src\Math\Vector\Vector4I.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
