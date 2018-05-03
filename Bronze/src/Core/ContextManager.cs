@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Runtime.InteropServices;
+using Bronze.Math;
+using Bronze.UserInterface;
 using glfw3;
 
 namespace Bronze.Core
@@ -62,7 +65,7 @@ namespace Bronze.Core
             SetActiveContext(DefaultContext);
         }
 
-        internal static GLFWwindow CreateContext(int width, int height, string title)
+        internal static GLFWwindow CreateContext(Vector2I size, string title)
         {
             Glfw.WindowHint((int) State.ContextVersionMajor, 4);
             Glfw.WindowHint((int) State.ContextVersionMinor, 1);
@@ -70,9 +73,19 @@ namespace Bronze.Core
             Glfw.WindowHint((int) State.OpenglForwardCompat, (int) State.True);
             Glfw.WindowHint((int) State.Doublebuffer, (int) State.True);
 
-            var context = Glfw.CreateWindow(width, height, title, null, DefaultContext);
+            var context = Glfw.CreateWindow(size.X, size.Y, title, null, DefaultContext);
             if(context == null) throw new CoreException($"Context \"{title}\" failed to initialize.");
             return context;
+        }
+
+        internal static Window WindowFromHandle(GLFWwindow handle) => (Window) GCHandle.FromIntPtr(Glfw.GetWindowUserPointer(handle)).Target;
+
+        internal static Window WindowFromPointer(IntPtr ptr)
+        {
+            unsafe
+            {
+                return WindowFromHandle(new GLFWwindow(ptr.ToPointer()));
+            }
         }
 
         internal static void EnsureDefaultContext()
