@@ -5,11 +5,11 @@ using OpenTK.Audio.OpenAL;
 
 namespace Bronze.Core
 {
-    public static class ResourceManager
+    public static class ResourceLoader
     {
         public static string ResourceDirectory { get; set; }
 
-        static ResourceManager()
+        static ResourceLoader()
         {
             ContextManager.EnsureDefaultContext();
             AudioContextManager.EnsureContext();
