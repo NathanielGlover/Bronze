@@ -10,6 +10,8 @@ namespace Bronze.Audio
 
         public int SampleRate { get; }
 
+        public bool Positional => Format == ALFormat.Mono8 || Format == ALFormat.Mono16;
+
         public float Duration
         {
             get

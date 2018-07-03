@@ -8,7 +8,6 @@ namespace Bronze.Audio
     {
         private readonly int source;
 
-        private Vector3 position, velocity, direction;
         private float startTime;
 
         public Sound Sound { get; }
@@ -18,8 +17,17 @@ namespace Bronze.Audio
             Sound = sound;
             source = AL.GenSource();
             AL.BindBufferToSource(source, sound.Buffer);
-            AL.Source(source, ALSourceb.SourceRelative, true);
-            AL.Listener(ALListener3f.Position, 0, 0, 0);
+        }
+
+        public bool UsesRelativePositioning
+        {
+            get
+            {
+                AL.GetSource(source, ALSourceb.SourceRelative, out bool relative);
+                return relative;
+            }
+
+            set => AL.Source(source, ALSourceb.SourceRelative, value);
         }
 
         public float VolumeMultiplier
@@ -68,41 +76,41 @@ namespace Bronze.Audio
 
         public Vector3 Position
         {
-            get => position;
-
-            set
+            get
             {
-                position = value;
-                AL.Source(source, ALSource3f.Position, value.X, value.Y, value.Z);
+                AL.GetSource(source, ALSource3f.Position, out float x, out float y, out float z);
+                return new Vector3(x, y, z);
             }
+
+            set => AL.Source(source, ALSource3f.Position, value.X, value.Y, value.Z);
         }
 
         public Vector3 Velocity
         {
-            get => velocity;
-
-            set
+            get
             {
-                velocity = value;
-                AL.Source(source, ALSource3f.Velocity, value.X, value.Y, value.Z);
+                AL.GetSource(source, ALSource3f.Velocity, out float x, out float y, out float z);
+                return new Vector3(x, y, z);
             }
+
+            set => AL.Source(source, ALSource3f.Velocity, value.X, value.Y, value.Z);
         }
 
         public Vector3 Direction
         {
-            get => direction;
-
-            set
+            get
             {
-                direction = value;
-                AL.Source(source, ALSource3f.Direction, value.X, value.Y, value.Z);
+                AL.GetSource(source, ALSource3f.Direction, out float x, out float y, out float z);
+                return new Vector3(x, y, z);
             }
+
+            set => AL.Source(source, ALSource3f.Direction, value.X, value.Y, value.Z);
         }
 
         public void Play()
         {
             AL.SourcePlay(source);
-            StartTime = StartTime; //OpenAL not working right here, start time is only applied if set while playing
+            StartTime = StartTime; //OpenAL not working right here, altered start time is only applied if set while playing
         }
 
         public void Pause() => AL.SourcePause(source);
