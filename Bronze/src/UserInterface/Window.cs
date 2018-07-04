@@ -45,9 +45,7 @@ namespace Bronze.UserInterface
         public event Action<Vector2I> Resized;
         
         public event Action<bool> Minimized;
-        
-        public event Action<Vector2D> Scrolled;
-        
+
         public event Action<List<string>> FilesDropped;
 
         public Window(Vector2I size, string title, WindowFlags flags = WindowFlags.Default)
@@ -99,7 +97,6 @@ namespace Bronze.UserInterface
                 Glfw.SetWindowSizeCallback(window, (ptr, width, height) =>
                     ContextManager.WindowFromPointer(ptr).Resized?.Invoke(new Vector2I(width, height)));
                 Glfw.SetWindowIconifyCallback(window, (ptr, minimized) => ContextManager.WindowFromPointer(ptr).Minimized?.Invoke(minimized == 1));
-                Glfw.SetScrollCallback(window, (ptr, x, y) => ContextManager.WindowFromPointer(ptr).Scrolled?.Invoke(new Vector2D(x, y)));
                 Glfw.SetDropCallback(window, (ptr, count, paths) =>
                 {
                     var pathsList = new List<string>(count);
