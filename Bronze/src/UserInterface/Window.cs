@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Bronze.Core;
 using Bronze.Math;
 using glfw3;
-using OpenTK.Graphics.OpenGL4;
+using OpenGL;
 
 namespace Bronze.UserInterface
 {
@@ -25,25 +25,25 @@ namespace Bronze.UserInterface
         public static Window ActiveWindow => ContextManager.WindowFromHandle(ContextManager.ActiveContext);
 
         public static void PollEvents() => Glfw.PollEvents();
-        
+
         public static void WaitEvents() => Glfw.WaitEvents();
-        
+
         public static void PostEmptyEvent() => Glfw.PostEmptyEvent();
 
-        private readonly GLFWwindow window;
-        
+        private readonly IntPtr window;
+
         private string title;
-        
+
         private bool vSync;
 
         public event Action Closed;
-        
+
         public event Action<bool> Focused;
-        
+
         public event Action<Vector2I> Moved;
-        
+
         public event Action<Vector2I> Resized;
-        
+
         public event Action<bool> Minimized;
 
         public event Action<List<string>> FilesDropped;
@@ -54,29 +54,23 @@ namespace Bronze.UserInterface
             ContextManager.EnsureDefaultContext();
             Glfw.DefaultWindowHints();
 
-            Glfw.WindowHint((int) State.ContextVersionMajor, 4);
-            Glfw.WindowHint((int) State.ContextVersionMinor, 1);
-            Glfw.WindowHint((int) State.OpenglProfile, (int) State.OpenglCoreProfile);
-            Glfw.WindowHint((int) State.OpenglForwardCompat, (int) State.True);
-            Glfw.WindowHint((int) State.Doublebuffer, (int) State.True);
+            int resizable = flags.HasFlag(WindowFlags.Resizable) ? Glfw.True : Glfw.False;
+            int focused = flags.HasFlag(WindowFlags.Focused) ? Glfw.True : Glfw.False;
+            int bordered = flags.HasFlag(WindowFlags.Bordered) ? Glfw.True : Glfw.False;
+            int visible = flags.HasFlag(WindowFlags.Visible) ? Glfw.True : Glfw.False;
+            int maximized = flags.HasFlag(WindowFlags.Maximized) ? Glfw.True : Glfw.False;
+            int floating = flags.HasFlag(WindowFlags.Floating) ? Glfw.True : Glfw.False;
 
-            int resizable = (int) (flags.HasFlag(WindowFlags.Resizable) ? State.True : State.False);
-            int focused = (int) (flags.HasFlag(WindowFlags.Focused) ? State.True : State.False);
-            int bordered = (int) (flags.HasFlag(WindowFlags.Bordered) ? State.True : State.False);
-            int visible = (int) (flags.HasFlag(WindowFlags.Visible) ? State.True : State.False);
-            int maximized = (int) (flags.HasFlag(WindowFlags.Maximized) ? State.True : State.False);
-            int floating = (int) (flags.HasFlag(WindowFlags.Floating) ? State.True : State.False);
-
-            Glfw.WindowHint((int) State.Resizable, resizable);
-            Glfw.WindowHint((int) State.Focused, focused);
-            Glfw.WindowHint((int) State.Decorated, bordered);
-            Glfw.WindowHint((int) State.Visible, visible);
-            Glfw.WindowHint((int) State.Maximized, maximized);
-            Glfw.WindowHint((int) State.Floating, floating);
+            Glfw.WindowHint(Glfw.Resizable, resizable);
+            Glfw.WindowHint(Glfw.Focused, focused);
+            Glfw.WindowHint(Glfw.Decorated, bordered);
+            Glfw.WindowHint(Glfw.Visible, visible);
+            Glfw.WindowHint(Glfw.Maximized, maximized);
+            Glfw.WindowHint(Glfw.Floating, floating);
 
             window = ContextManager.CreateContext(size, title);
 
-            if(window == null)
+            if(window == IntPtr.Zero)
             {
                 throw new Exception("Window failed to create. Your computer is probably broken. Try replacing it.");
             }
@@ -89,27 +83,14 @@ namespace Bronze.UserInterface
             windowHandle.Target = this;
             Glfw.SetWindowUserPointer(window, GCHandle.ToIntPtr(windowHandle));
 
-            unsafe
-            {
-                Glfw.SetWindowCloseCallback(window, ptr => ContextManager.WindowFromPointer(ptr).Closed?.Invoke());
-                Glfw.SetWindowFocusCallback(window, (ptr, gainedFocus) => ContextManager.WindowFromPointer(ptr).Focused?.Invoke(gainedFocus == 1));
-                Glfw.SetWindowPosCallback(window, (ptr, x, y) => ContextManager.WindowFromPointer(ptr).Moved?.Invoke(new Vector2I(x, y)));
-                Glfw.SetWindowSizeCallback(window, (ptr, width, height) =>
-                    ContextManager.WindowFromPointer(ptr).Resized?.Invoke(new Vector2I(width, height)));
-                Glfw.SetWindowIconifyCallback(window, (ptr, minimized) => ContextManager.WindowFromPointer(ptr).Minimized?.Invoke(minimized == 1));
-                Glfw.SetDropCallback(window, (ptr, count, paths) =>
-                {
-                    var pathsList = new List<string>(count);
-
-                    for(int i = 0; i < count; i++)
-                    {
-                        var stringPtr = new IntPtr(paths[i]);
-                        pathsList.Add(Marshal.PtrToStringAuto(stringPtr));
-                    }
-
-                    ContextManager.WindowFromPointer(ptr).FilesDropped?.Invoke(pathsList);
-                });
-            }
+            Glfw.SetWindowCloseCallback(window, ptr => ContextManager.WindowFromPointer(ptr).Closed?.Invoke());
+            Glfw.SetWindowFocusCallback(window, (ptr, gainedFocus) => ContextManager.WindowFromPointer(ptr).Focused?.Invoke(gainedFocus == 1));
+            Glfw.SetWindowPosCallback(window, (ptr, x, y) => ContextManager.WindowFromPointer(ptr).Moved?.Invoke(new Vector2I(x, y)));
+            Glfw.SetWindowSizeCallback(window, (ptr, width, height) =>
+                ContextManager.WindowFromPointer(ptr).Resized?.Invoke(new Vector2I(width, height)));
+            Glfw.SetWindowIconifyCallback(window, (ptr, minimized) => ContextManager.WindowFromPointer(ptr).Minimized?.Invoke(minimized == 1));
+            Glfw.SetDropCallback(window, (ptr, count, paths) =>
+                ContextManager.WindowFromPointer(ptr).FilesDropped?.Invoke(new List<string>(paths)));
         }
 
         public ContextInfo ContextInfo => new ContextInfo(window);
@@ -129,8 +110,7 @@ namespace Bronze.UserInterface
         {
             get
             {
-                int width = 0, height = 0;
-                Glfw.GetFramebufferSize(window, ref width, ref height);
+                Glfw.GetFramebufferSize(window, out int width, out int height);
                 return new Vector2I(width, height);
             }
         }
@@ -139,8 +119,7 @@ namespace Bronze.UserInterface
         {
             get
             {
-                int width = 0, height = 0;
-                Glfw.GetWindowSize(window, ref width, ref height);
+                Glfw.GetWindowSize(window, out int width, out int height);
                 return new Vector2I(width, height);
             }
 
@@ -151,8 +130,7 @@ namespace Bronze.UserInterface
         {
             get
             {
-                int x = 0, y = 0;
-                Glfw.GetWindowPos(window, ref x, ref y);
+                Glfw.GetWindowPos(window, out int x, out int y);
                 return new Vector2I(x, y);
             }
 
@@ -176,8 +154,8 @@ namespace Bronze.UserInterface
         {
             ContextManager.RunInSeperateContext(() =>
             {
-                GL.ClearColor(color.X, color.Y, color.Z, 1.0f);
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+                Gl.ClearColor(color.X, color.Y, color.Z, 1.0f);
+                Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             }, window);
         }
 
@@ -191,17 +169,17 @@ namespace Bronze.UserInterface
 
         public bool IsActive => ContextManager.IsActive(window);
 
-        public bool IsOpen => Glfw.WindowShouldClose(window) != (int) State.True;
+        public bool IsOpen => Glfw.WindowShouldClose(window) != Glfw.True;
 
-        public bool IsMinimized => Glfw.GetWindowAttrib(window, (int) State.Iconified) == 1;
+        public bool IsMinimized => Glfw.GetWindowAttrib(window, Glfw.Iconified) == 1;
 
-        public bool IsMaximized => Glfw.GetWindowAttrib(window, (int) State.Maximized) == 1;
+        public bool IsMaximized => Glfw.GetWindowAttrib(window, Glfw.Maximized) == 1;
 
-        public bool IsFocused => Glfw.GetWindowAttrib(window, (int) State.Focused) == 1;
+        public bool IsFocused => Glfw.GetWindowAttrib(window, Glfw.Focused) == 1;
 
-        public bool IsVisible => Glfw.GetWindowAttrib(window, (int) State.Visible) == 1;
+        public bool IsVisible => Glfw.GetWindowAttrib(window, Glfw.Visible) == 1;
 
-        public void Close() => Glfw.SetWindowShouldClose(window, (int) State.True);
+        public void Close() => Glfw.SetWindowShouldClose(window, Glfw.True);
 
         public void Minimize() => Glfw.IconifyWindow(window);
 

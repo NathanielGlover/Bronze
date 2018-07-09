@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using glfw3;
-using OpenTK.Graphics.OpenGL4;
+﻿using System;
+using System.Collections.Generic;
+using OpenGL;
 
 namespace Bronze.Core
 {
     public class ContextInfo
     {
-        private GLFWwindow context;
+        private readonly IntPtr context;
 
-        internal ContextInfo(GLFWwindow context) => this.context = context;
+        internal ContextInfo(IntPtr context) => this.context = context;
 
         public List<string> SupportedExtensions
         {
@@ -16,23 +16,83 @@ namespace Bronze.Core
             {
                 var extensions = new List<string>();
 
-                for(int i = 0; i < GL.GetInteger(GetPName.NumExtensions); i++)
+                ContextManager.RunInSeperateContext(() =>
                 {
-                    extensions.Add(GL.GetString(StringNameIndexed.Extensions, i));
-                }
+                    Gl.Get(GetPName.NumExtensions, out int numExtensions);
+                    for(int i = 0; i < numExtensions; i++)
+                    {
+                        extensions.Add(Gl.GetString(StringName.Extensions, (uint) i));
+                    }
+                }, context);
 
                 return extensions;
             }
         }
 
-        public double Version => double.Parse($"{GL.GetInteger(GetPName.MajorVersion)}.{GL.GetInteger(GetPName.MinorVersion)}");
+        public double Version
+        {
+            get
+            {
+                int major = -1, minor = -1;
+                ContextManager.RunInSeperateContext(() =>
+                {
+                    Gl.Get(Gl.MAJOR_VERSION, out major);
+                    Gl.Get(Gl.MINOR_VERSION, out minor);
+                }, context);
+                return double.Parse($"{major}.{minor}");
+            }
+        }
 
-        public string VersionString => GL.GetString(StringName.Version);
+        public string VersionString
+        {
+            get
+            {
+                string s = "";
+                ContextManager.RunInSeperateContext(() =>
+                {
+                    s = Gl.GetString(StringName.Version);
+                }, context);
+                return s;
+            }
+        }
 
-        public string Vendor => GL.GetString(StringName.Vendor);
+        public string Vendor
+        {
+            get
+            {
+                string s = "";
+                ContextManager.RunInSeperateContext(() =>
+                {
+                    s = Gl.GetString(StringName.Vendor);
+                }, context);
+                return s;
+            }
+        }
 
-        public string Renderer => GL.GetString(StringName.Renderer);
+        public string Renderer
+        {
+            get
+            {
+                string s = "";
+                ContextManager.RunInSeperateContext(() =>
+                {
+                    s = Gl.GetString(StringName.Renderer);
+                }, context);
+                return s;
+            }
+        }
 
-        public string ShadingLanguageVersion => GL.GetString(StringName.ShadingLanguageVersion);
+        public string ShadingLanguageVersion
+        {
+            get
+            {
+                string s = "";
+                ContextManager.RunInSeperateContext(() =>
+                {
+                    s = Gl.GetString(StringName.ShadingLanguageVersion);
+                }, context);
+                return s;
+            }
+        }
     }
 }

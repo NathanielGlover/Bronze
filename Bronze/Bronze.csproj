@@ -1,89 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{33F46291-B4E6-46CB-8941-8CDF9B10415B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bronze</RootNamespace>
-    <AssemblyName>Bronze</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>7.1</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
-      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="BindingGLFW, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\GLFW3.NET\lib\net45\BindingGLFW.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Audio\AudioContextManager.cs" />
-    <Compile Include="src\Audio\AudioLoader.cs" />
-    <Compile Include="src\Audio\AudioSource.cs" />
-    <Compile Include="src\Audio\Listener.cs" />
-    <Compile Include="src\Audio\Sound.cs" />
-    <Compile Include="src\Core\CoreException.cs" />
-    <Compile Include="src\Core\ContextInfo.cs" />
-    <Compile Include="src\Core\ContextManager.cs" />
-    <Compile Include="src\Math\Complex\Complex.cs" />
-    <Compile Include="src\Math\Complex\ComplexD.cs" />
-    <Compile Include="src\Math\Math.cs" />
-    <Compile Include="src\Math\Vector\Vector2.cs" />
-    <Compile Include="src\Math\Vector\Vector2D.cs" />
-    <Compile Include="src\Math\Vector\Vector2I.cs" />
-    <Compile Include="src\Math\Vector\Vector3.cs" />
-    <Compile Include="src\Math\Vector\Vector3D.cs" />
-    <Compile Include="src\Math\Vector\Vector3I.cs" />
-    <Compile Include="src\Math\Vector\Vector4.cs" />
-    <Compile Include="src\Math\Vector\Vector4D.cs" />
-    <Compile Include="src\Math\Vector\Vector4I.cs" />
-    <Compile Include="src\UserInterface\Window.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="OpenTK.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
-    <None Include="BindingGLFW.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
-    <Target Name="AfterBuild">
-    </Target>
-    -->
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Glfw3.NETCore" Version="3.2.1" />
+        <PackageReference Include="OpenAL.NETCore" Version="1.0.0" />
+        <PackageReference Include="OpenGL.Net" Version="0.7.1" />
+    </ItemGroup>
+
 </Project>

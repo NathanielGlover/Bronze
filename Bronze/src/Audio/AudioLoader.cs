@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
-using OpenTK.Audio.OpenAL;
+using OpenAL;
 
 namespace Bronze.Audio
 {
     public static class AudioLoader
     {
         private static string resourceDirectory;
-        
+
         public static string ResourceDirectory
         {
             get => resourceDirectory;
@@ -37,29 +37,29 @@ namespace Bronze.Audio
         {
             AudioContextManager.EnsureContext();
         }
-        
-        private static ALFormat GetSoundFormat(int channels, int bits)
+
+        private static int GetSoundFormat(int channels, int bits)
         {
             switch(channels)
             {
-                case 1: return bits == 8 ? ALFormat.Mono8 : ALFormat.Mono16;
-                case 2: return bits == 8 ? ALFormat.Stereo8 : ALFormat.Stereo16;
+                case 1: return bits == 8 ? Al.FormatMono8 : Al.FormatMono16;
+                case 2: return bits == 8 ? Al.FormatStereo8 : Al.FormatStereo16;
                 default: throw new NotSupportedException("The specified sound format is not supported.");
             }
         }
-        
+
         private static byte[] MonoToStereo(byte[] input)
         {
             var output = new byte[input.Length * 2];
             int outputIndex = 0;
-            for (int n = 0; n < input.Length; n+=2)
+            for(int n = 0; n < input.Length; n += 2)
             {
                 output[outputIndex++] = input[n];
-                output[outputIndex++] = input[n+1];
+                output[outputIndex++] = input[n + 1];
                 output[outputIndex++] = input[n];
-                output[outputIndex++] = input[n+1];        
+                output[outputIndex++] = input[n + 1];
             }
-            
+
             return output;
         }
 
@@ -84,13 +84,14 @@ namespace Bronze.Audio
         //TODO: Add support for mp3, ogg, oga, aac, aiff, flac, and m4a
         public static Sound LoadSound(string path, bool positional = true)
         {
-            string fileEnding = path.Split(new []{'.'}, 2)[1];
+            string fileEnding = path.Split(new[] {'.'}, 2)[1];
             string filePath = ResourceDirectory + path;
             Sound sound;
-            
+
             switch(fileEnding)
             {
-                case "wav": sound = LoadSoundFromWav(filePath, positional);
+                case "wav":
+                    sound = LoadSoundFromWav(filePath, positional);
                     break;
                 default: throw new NotSupportedException($"Audio format \"{fileEnding}\" is not supported.");
             }
@@ -106,15 +107,23 @@ namespace Bronze.Audio
             {
                 string signature = new string(reader.ReadChars(4));
                 if(signature != "RIFF")
+                {
                     throw new NotSupportedException($"{wavFile} is not a wave file.");
+                }
 
                 int riffChunckSize = reader.ReadInt32();
 
                 string format = new string(reader.ReadChars(4));
-                if(format != "WAVE") throw new NotSupportedException($"{wavFile} is not a wave file.");
+                if(format != "WAVE")
+                {
+                    throw new NotSupportedException($"{wavFile} is not a wave file.");
+                }
 
                 string formatSignature = new string(reader.ReadChars(4));
-                if(formatSignature != "fmt ") throw new NotSupportedException($"Wave file \"{wavFile}\" is not supported.");
+                if(formatSignature != "fmt ")
+                {
+                    throw new NotSupportedException($"Wave file \"{wavFile}\" is not supported.");
+                }
 
                 int formatChunkSize = reader.ReadInt32();
                 int audioFormat = reader.ReadInt16();
@@ -125,7 +134,10 @@ namespace Bronze.Audio
                 int bitsPerSample = reader.ReadInt16();
 
                 string dataSignature = new string(reader.ReadChars(4));
-                if(dataSignature != "data") throw new NotSupportedException($"Wave file \"{wavFile}\" is not supported.");
+                if(dataSignature != "data")
+                {
+                    throw new NotSupportedException($"Wave file \"{wavFile}\" is not supported.");
+                }
 
                 int dataChunkSize = reader.ReadInt32();
 
@@ -134,28 +146,28 @@ namespace Bronze.Audio
                 var alFormat = GetSoundFormat(numChannels, bitsPerSample);
                 if(mono)
                 {
-                    if(alFormat == ALFormat.Stereo8)
+                    if(alFormat == Al.FormatStereo8)
                     {
                         soundData = MixStereoToMono(soundData);
-                        alFormat = ALFormat.Mono8;
+                        alFormat = Al.FormatMono8;
                     }
-                    else if(alFormat == ALFormat.Stereo16)
+                    else if(alFormat == Al.FormatStereo16)
                     {
                         soundData = MixStereoToMono(soundData);
-                        alFormat = ALFormat.Mono16;
+                        alFormat = Al.FormatMono16;
                     }
                 }
                 else
                 {
-                    if(alFormat == ALFormat.Mono8)
+                    if(alFormat == Al.FormatMono8)
                     {
                         soundData = MonoToStereo(soundData);
-                        alFormat = ALFormat.Stereo8;
+                        alFormat = Al.FormatStereo8;
                     }
-                    else if(alFormat == ALFormat.Mono16)
+                    else if(alFormat == Al.FormatMono16)
                     {
                         soundData = MonoToStereo(soundData);
-                        alFormat = ALFormat.Stereo16;
+                        alFormat = Al.FormatStereo16;
                     }
                 }
 

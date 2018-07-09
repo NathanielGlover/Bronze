@@ -1,38 +1,39 @@
-﻿using OpenTK.Audio.OpenAL;
+﻿using OpenAL;
 
 namespace Bronze.Audio
 {
     public class Sound
     {
-        internal int Buffer { get; }
+        internal uint Buffer { get; }
 
-        private ALFormat Format { get; }
+        private int Format { get; }
 
         public int SampleRate { get; }
 
-        public bool Positional => Format == ALFormat.Mono8 || Format == ALFormat.Mono16;
+        public bool Positional => Format == Al.FormatMono8 || Format == Al.FormatMono16;
 
         public float Duration
         {
             get
             {
-                AL.GetBuffer(Buffer, ALGetBufferi.Size, out int sizeInBytes);
-                AL.GetBuffer(Buffer, ALGetBufferi.Channels, out int channels);
-                AL.GetBuffer(Buffer, ALGetBufferi.Bits, out int bits);
+                Al.GetBufferi(Buffer, Al.Size, out int sizeInBytes);
+                Al.GetBufferi(Buffer, Al.Channels, out int channels);
+                Al.GetBufferi(Buffer, Al.Bits, out int bits);
 
                 int lengthInSamples = sizeInBytes * 8 / (channels * bits);
 
-                AL.GetBuffer(Buffer, ALGetBufferi.Frequency, out int frequency);
+                Al.GetBufferi(Buffer, Al.Frequency, out int frequency);
                 return (float) lengthInSamples / frequency;
             }
         }
 
-        internal Sound(ALFormat format, byte[] soundData, int sampleRate)
+        internal Sound(int format, byte[] soundData, int sampleRate)
         {
-            Buffer = AL.GenBuffer();
+            Al.GenBuffer(out uint buffer);
+            Buffer = buffer;
             Format = format;
             SampleRate = sampleRate;
-            AL.BufferData(Buffer, format, soundData, soundData.Length, sampleRate);
+            Al.BufferData(Buffer, format, soundData, soundData.Length, sampleRate);
         }
     }
 }

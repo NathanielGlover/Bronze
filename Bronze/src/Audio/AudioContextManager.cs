@@ -1,25 +1,22 @@
 ﻿using System;
-using OpenTK;
-using OpenTK.Audio.OpenAL;
-using OpenTK.Audio;
+using OpenAL;
 
 namespace Bronze.Audio
 {
     internal static class AudioContextManager
     {
-        private static readonly ContextHandle AudioContext;
-        
+        private static readonly IntPtr AudioContext;
+
         static AudioContextManager()
         {
             var device = Alc.OpenDevice(null);
             if(device != IntPtr.Zero)
             {
-                AudioContext = Alc.CreateContext(device, (int[]) null);
+                AudioContext = Alc.CreateContext(device, null);
                 Alc.MakeContextCurrent(AudioContext);
             }
-            
         }
-        
+
         public static void EnsureContext()
         {
             if(AudioContext == null) throw new NullReferenceException("OpenAL context was prematurely destroyed. Please don't do that.");

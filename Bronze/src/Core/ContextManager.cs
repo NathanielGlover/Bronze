@@ -3,97 +3,85 @@ using System.Runtime.InteropServices;
 using Bronze.Math;
 using Bronze.UserInterface;
 using glfw3;
+using Khronos;
+using OpenGL;
+using KhronosApi = Khronos.KhronosApi;
 
 namespace Bronze.Core
 {
     public static class ContextManager
     {
-        internal static GLFWwindow DefaultContext { get; }
+        internal static IntPtr DefaultContext { get; }
 
         public static ContextInfo DefaultContextInfo => new ContextInfo(DefaultContext);
 
-        internal static GLFWwindow ActiveContext => Glfw.GetCurrentContext();
+        internal static IntPtr ActiveContext => Glfw.GetCurrentContext();
 
         public static event Action<ContextInfo> ContextChange;
 
         static ContextManager()
         {
-            //Get OpenTK to play nicely with GLFW.NET
-            try
-            {
-                var nativeWindow = new OpenTK.NativeWindow
-                (
-                    1, 1, "",
-                    OpenTK.GameWindowFlags.Default,
-                    OpenTK.Graphics.GraphicsMode.Default,
-                    OpenTK.DisplayDevice.Default
-                );
-
-                var context = new OpenTK.Graphics.GraphicsContext
-                (
-                    OpenTK.Graphics.GraphicsMode.Default,
-                    nativeWindow.WindowInfo, 4, 1,
-                    OpenTK.Graphics.GraphicsContextFlags.ForwardCompatible
-                );
-
-                context.MakeCurrent(nativeWindow.WindowInfo);
-                context.LoadAll();
-
-                Glfw.Init();
-            }
-            catch(Exception e)
-            {
-                throw new CoreException("Bronze failed to initialize: " + e.Message);
-            }
-
+            Gl.Initialize();
+            Glfw.Init();
             Glfw.DefaultWindowHints();
-            
-            Glfw.WindowHint((int) State.ContextVersionMajor, 4);
-            Glfw.WindowHint((int) State.ContextVersionMinor, 1);
-            Glfw.WindowHint((int) State.OpenglProfile, (int) State.OpenglCoreProfile);
-            Glfw.WindowHint((int) State.OpenglForwardCompat, (int) State.True);
-            Glfw.WindowHint((int) State.Doublebuffer, (int) State.True);
-            
-            Glfw.WindowHint((int) State.Visible, (int) State.False);
-            
-            DefaultContext = Glfw.CreateWindow(1, 1, "", null, null);
-            if(DefaultContext == null)
+
+            Glfw.WindowHint(Glfw.ContextVersionMajor, 4);
+            Glfw.WindowHint(Glfw.ContextVersionMinor, 1);
+            Glfw.WindowHint(Glfw.OpenglProfile, Glfw.OpenglCoreProfile);
+            Glfw.WindowHint(Glfw.OpenglForwardCompat, Glfw.True);
+            Glfw.WindowHint(Glfw.Doublebuffer, Glfw.True);
+
+            Glfw.WindowHint(Glfw.Visible, Glfw.False);
+
+            DefaultContext = Glfw.CreateWindow(1, 1, "", IntPtr.Zero, IntPtr.Zero);
+            if(DefaultContext == IntPtr.Zero)
             {
                 throw new CoreException("Default OpenGL context failed to initialize.");
             }
 
             SetActiveContext(DefaultContext);
+
+            Glx.IsRequired = true;
+            Gl.BindAPI(new KhronosVersion(4, 1, "gl"), new Gl.Extensions());
         }
 
-        internal static GLFWwindow CreateContext(Vector2I size, string title)
+        internal static IntPtr CreateContext(Vector2I size, string title)
         {
-            Glfw.WindowHint((int) State.ContextVersionMajor, 4);
-            Glfw.WindowHint((int) State.ContextVersionMinor, 1);
-            Glfw.WindowHint((int) State.OpenglProfile, (int) State.OpenglCoreProfile);
-            Glfw.WindowHint((int) State.OpenglForwardCompat, (int) State.True);
-            Glfw.WindowHint((int) State.Doublebuffer, (int) State.True);
+            Glfw.WindowHint(Glfw.ContextVersionMajor, 4);
+            Glfw.WindowHint(Glfw.ContextVersionMinor, 1);
+            Glfw.WindowHint(Glfw.OpenglProfile, Glfw.OpenglCoreProfile);
+            Glfw.WindowHint(Glfw.OpenglForwardCompat, Glfw.True);
+            Glfw.WindowHint(Glfw.Doublebuffer, Glfw.True);
 
-            var context = Glfw.CreateWindow(size.X, size.Y, title, null, DefaultContext);
-            if(context == null) throw new CoreException($"Context \"{title}\" failed to initialize.");
+            var context = Glfw.CreateWindow(size.X, size.Y, title, IntPtr.Zero, DefaultContext);
+            if(context == IntPtr.Zero) throw new CoreException($"Context \"{title}\" failed to initialize.");
+
+            RunInSeperateContext(() =>
+            {
+                Glx.IsRequired = true;
+                Gl.BindAPI(new KhronosVersion(4, 1, "gl"), new Gl.Extensions());
+            }, context);
+
             return context;
         }
 
-        internal static Window WindowFromHandle(GLFWwindow handle) => (Window) GCHandle.FromIntPtr(Glfw.GetWindowUserPointer(handle)).Target;
+        internal static Window WindowFromHandle(IntPtr handle) => (Window) GCHandle.FromIntPtr(Glfw.GetWindowUserPointer(handle)).Target;
 
         internal static Window WindowFromPointer(IntPtr ptr)
         {
             unsafe
             {
-                return WindowFromHandle(new GLFWwindow(ptr.ToPointer()));
+                return WindowFromHandle(new IntPtr(ptr.ToPointer()));
             }
         }
 
         internal static void EnsureDefaultContext()
         {
-            if(DefaultContext == null) throw new NullReferenceException("Default OpenGL context was prematurely destroyed. Please don't do that.");
+            if(DefaultContext == IntPtr.Zero)
+                throw new NullReferenceException("Default OpenGL context was prematurely destroyed. Please don't do that.");
         }
 
-        internal static void RunInSeperateContext(Action task, GLFWwindow context)
+        internal static void RunInSeperateContext(Action task, IntPtr context)
         {
             var currentContext = ActiveContext;
             SetActiveContext(context);
@@ -103,12 +91,12 @@ namespace Bronze.Core
 
         internal static void RunInDefaultContext(Action task) => RunInSeperateContext(task, DefaultContext);
 
-        internal static void SetActiveContext(GLFWwindow context)
+        internal static void SetActiveContext(IntPtr context)
         {
             Glfw.MakeContextCurrent(context);
             ContextChange?.Invoke(new ContextInfo(context));
         }
 
-        internal static bool IsActive(GLFWwindow context) => context == ActiveContext;
+        internal static bool IsActive(IntPtr context) => context == ActiveContext;
     }
 }
