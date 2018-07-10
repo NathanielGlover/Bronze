@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using OpenAL;
+using libsndfile.NET;
 
 namespace Bronze.Audio
 {
@@ -48,9 +50,9 @@ namespace Bronze.Audio
             }
         }
 
-        private static byte[] MonoToStereo(byte[] input)
+        private static short[] MonoToStereo(short[] input)
         {
-            var output = new byte[input.Length * 2];
+            var output = new short[input.Length * 2];
             int outputIndex = 0;
             for(int n = 0; n < input.Length; n += 2)
             {
@@ -63,116 +65,79 @@ namespace Bronze.Audio
             return output;
         }
 
-        private static byte[] MixStereoToMono(byte[] input)
+        private static short[] MixStereoToMono(short[] input)
         {
-            var output = new byte[input.Length / 2];
+            var output = new short[input.Length];
             int outputIndex = 0;
-            for(int n = 0; n < input.Length; n += 4)
+            for(int n = 0; n < input.Length; n += 2)
             {
-                int leftChannel = BitConverter.ToInt16(input, n);
-                int rightChannel = BitConverter.ToInt16(input, n + 2);
-                int mixed = (leftChannel + rightChannel) / 2;
-                var outSample = BitConverter.GetBytes((short) mixed);
+                short leftChannel = input[n];
+                short rightChannel = input[n + 1];
+                short mixed = (short) ((leftChannel + rightChannel) / 2);
 
-                output[outputIndex++] = outSample[0];
-                output[outputIndex++] = outSample[1];
+                output[outputIndex++] = mixed;
+                output[outputIndex++] = mixed;
             }
 
             return output;
         }
 
-        //TODO: Add support for mp3, ogg, oga, aac, aiff, flac, and m4a
-        public static Sound LoadSound(string path, bool positional = true)
+        public static Sound LoadSound(string path, AudioType type = AudioType.Positional)
         {
-            string fileEnding = path.Split(new[] {'.'}, 2)[1];
             string filePath = ResourceDirectory + path;
-            Sound sound;
+            if(!File.Exists(filePath)) throw new FileNotFoundException($"Audio file \"{filePath}\" could not be found");
 
-            switch(fileEnding)
+            var file = SndFile.OpenRead(filePath);
+            if(file == null)
             {
-                case "wav":
-                    sound = LoadSoundFromWav(filePath, positional);
+                throw new NotSupportedException($"The audio format for \"{filePath}\" is not supported");
+            } 
+            
+            var data = new short[file.Frames * file.Format.Channels];
+            file.ReadFrames(data, file.Frames);
+
+            int bitsPerSample;
+            
+            //If number of channels doesn't match requested audio type 
+            if(!(type == AudioType.Positional && file.Format.Channels == 1 || type == AudioType.Stereo && file.Format.Channels == 2))
+            {
+                switch(type)
+                {
+                    case AudioType.Positional:
+                        data = MixStereoToMono(data);
+                        break;
+                    case AudioType.Stereo:
+                        data = MonoToStereo(data);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                }
+            }
+
+            switch(file.Format.Subtype)
+            {
+                case SfFormatSubtype.PCM_S8:
+                case SfFormatSubtype.PCM_U8:
+                case SfFormatSubtype.DPCM_8:
+                    bitsPerSample = 8;
                     break;
-                default: throw new NotSupportedException($"Audio format \"{fileEnding}\" is not supported.");
+                case SfFormatSubtype.PCM_16:
+                case SfFormatSubtype.DWVW_16:
+                case SfFormatSubtype.DPCM_16:
+                case SfFormatSubtype.VORBIS:
+                    bitsPerSample = 16;
+                    break;
+                default:
+                    throw new NotSupportedException($"Audio format \"{file.Format.Subtype}\" is not supported.");
             }
-
-            return sound;
+            
+            return new Sound(GetSoundFormat(file.Format.Channels, bitsPerSample), data, file.Format.SampleRate);
         }
+    }
 
-        private static Sound LoadSoundFromWav(string wavFile, bool mono)
-        {
-            var stream = File.Open(wavFile, FileMode.Open);
-
-            using(var reader = new BinaryReader(stream))
-            {
-                string signature = new string(reader.ReadChars(4));
-                if(signature != "RIFF")
-                {
-                    throw new NotSupportedException($"{wavFile} is not a wave file.");
-                }
-
-                int riffChunckSize = reader.ReadInt32();
-
-                string format = new string(reader.ReadChars(4));
-                if(format != "WAVE")
-                {
-                    throw new NotSupportedException($"{wavFile} is not a wave file.");
-                }
-
-                string formatSignature = new string(reader.ReadChars(4));
-                if(formatSignature != "fmt ")
-                {
-                    throw new NotSupportedException($"Wave file \"{wavFile}\" is not supported.");
-                }
-
-                int formatChunkSize = reader.ReadInt32();
-                int audioFormat = reader.ReadInt16();
-                int numChannels = reader.ReadInt16();
-                int sampleRate = reader.ReadInt32();
-                int byteRate = reader.ReadInt32();
-                int blockAlign = reader.ReadInt16();
-                int bitsPerSample = reader.ReadInt16();
-
-                string dataSignature = new string(reader.ReadChars(4));
-                if(dataSignature != "data")
-                {
-                    throw new NotSupportedException($"Wave file \"{wavFile}\" is not supported.");
-                }
-
-                int dataChunkSize = reader.ReadInt32();
-
-                var soundData = reader.ReadBytes((int) reader.BaseStream.Length);
-
-                var alFormat = GetSoundFormat(numChannels, bitsPerSample);
-                if(mono)
-                {
-                    if(alFormat == Al.FormatStereo8)
-                    {
-                        soundData = MixStereoToMono(soundData);
-                        alFormat = Al.FormatMono8;
-                    }
-                    else if(alFormat == Al.FormatStereo16)
-                    {
-                        soundData = MixStereoToMono(soundData);
-                        alFormat = Al.FormatMono16;
-                    }
-                }
-                else
-                {
-                    if(alFormat == Al.FormatMono8)
-                    {
-                        soundData = MonoToStereo(soundData);
-                        alFormat = Al.FormatStereo8;
-                    }
-                    else if(alFormat == Al.FormatMono16)
-                    {
-                        soundData = MonoToStereo(soundData);
-                        alFormat = Al.FormatStereo16;
-                    }
-                }
-
-                return new Sound(alFormat, soundData, sampleRate);
-            }
-        }
+    public enum AudioType
+    {
+        Positional,
+        Stereo
     }
 }

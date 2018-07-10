@@ -14,4 +14,10 @@
         <PackageReference Include="OpenGL.Net" Version="0.7.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="libsndfile.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\libsndfile.NET\libsndfile.NET\bin\Debug\netstandard2.0\libsndfile.NET.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+    
 </Project>

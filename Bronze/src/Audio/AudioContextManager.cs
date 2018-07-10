@@ -19,7 +19,7 @@ namespace Bronze.Audio
 
         public static void EnsureContext()
         {
-            if(AudioContext == null) throw new NullReferenceException("OpenAL context was prematurely destroyed. Please don't do that.");
+            if(AudioContext == IntPtr.Zero) throw new NullReferenceException("OpenAL context was prematurely destroyed. Please don't do that.");
             Alc.MakeContextCurrent(AudioContext);
         }
     }

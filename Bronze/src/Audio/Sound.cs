@@ -1,4 +1,5 @@
-﻿using OpenAL;
+﻿using System;
+using OpenAL;
 
 namespace Bronze.Audio
 {
@@ -6,11 +7,14 @@ namespace Bronze.Audio
     {
         internal uint Buffer { get; }
 
-        private int Format { get; }
-
-        public int SampleRate { get; }
-
-        public bool Positional => Format == Al.FormatMono8 || Format == Al.FormatMono16;
+        public AudioType Type
+        {
+            get
+            {
+                Al.GetBufferi(Buffer, Al.Channels, out int channels);
+                return channels == 1 ? AudioType.Positional : AudioType.Stereo;
+            }
+        }
 
         public float Duration
         {
@@ -27,13 +31,17 @@ namespace Bronze.Audio
             }
         }
 
-        internal Sound(int format, byte[] soundData, int sampleRate)
+        internal Sound(int format, short[] soundData, int sampleRate)
         {
             Al.GenBuffer(out uint buffer);
             Buffer = buffer;
-            Format = format;
-            SampleRate = sampleRate;
-            Al.BufferData(Buffer, format, soundData, soundData.Length, sampleRate);
+            unsafe
+            {
+                fixed(short* dataPtr = soundData)
+                {
+                    Al.BufferData(Buffer, format, dataPtr, soundData.Length * sizeof(short), sampleRate);
+                }
+            }
         }
     }
 }
