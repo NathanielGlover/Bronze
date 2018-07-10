@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Glfw3.NETCore" Version="3.2.1" />
-        <PackageReference Include="OpenAL.NETCore" Version="1.0.0" />
+        <PackageReference Include="Glfw3.NETCore" Version="1.0.1" />
+        <PackageReference Include="OpenAL.NETCore" Version="1.0.1" />
         <PackageReference Include="OpenGL.Net" Version="0.7.1" />
     </ItemGroup>
 
