@@ -89,7 +89,7 @@ namespace Bronze.Math
 
         public static float Tanh(float x) => (float) M.Tanh(x);
 
-        public static float Trim(float x) => EqualsWithTolerance(x, 0) ? 0 : x;
+        public static float Trim(float x) => EqualsWithTolerance(x, Round(x)) ? Round(x) : x;
 
         //-----------------------//
         // Double-Precision Real //
@@ -168,7 +168,7 @@ namespace Bronze.Math
 
         public static double Tanh(double x) => M.Tanh(x);
 
-        public static double Trim(double x) => EqualsWithTolerance(x, 0) ? 0 : x;
+        public static double Trim(double x) => EqualsWithTolerance(x, Round(x)) ? Round(x) : x;
 
         //---------//
         // Complex //
