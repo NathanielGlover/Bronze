@@ -16,7 +16,7 @@
 
     <ItemGroup>
       <Reference Include="libsndfile.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\libsndfile.NET\libsndfile.NET\bin\Debug\netstandard2.0\libsndfile.NET.dll</HintPath>
+        <HintPath>..\..\RiderProjects\libsndfile.NET\libsndfile.NET\bin\Debug\netstandard2.0\libsndfile.NET.dll</HintPath>
       </Reference>
     </ItemGroup>
     
