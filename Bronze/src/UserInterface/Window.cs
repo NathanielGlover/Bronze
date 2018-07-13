@@ -30,23 +30,23 @@ namespace Bronze.UserInterface
 
         public static void PostEmptyEvent() => Glfw.PostEmptyEvent();
 
-        private readonly IntPtr window;
+        internal readonly IntPtr Handle;
 
         private string title;
 
         private bool vSync;
 
-        public event Action Closed;
+        public event Action<Window> Closed;
 
-        public event Action<bool> Focused;
+        public event Action<Window, bool> Focused;
 
-        public event Action<Vector2I> Moved;
+        public event Action<Window, Vector2I> Moved;
 
-        public event Action<Vector2I> Resized;
+        public event Action<Window, Vector2I> Resized;
 
-        public event Action<bool> Minimized;
+        public event Action<Window, bool> Minimized;
 
-        public event Action<List<string>> FilesDropped;
+        public event Action<Window, List<string>> FilesDropped;
 
         public Window(Vector2I size, string title, WindowFlags flags = WindowFlags.Default)
         {
@@ -68,9 +68,9 @@ namespace Bronze.UserInterface
             Glfw.WindowHint(Glfw.Maximized, maximized);
             Glfw.WindowHint(Glfw.Floating, floating);
 
-            window = ContextManager.CreateContext(size, title);
+            Handle = ContextManager.CreateContext(size, title);
 
-            if(window == IntPtr.Zero)
+            if(Handle == IntPtr.Zero)
             {
                 throw new Exception("Window failed to create. Your computer is probably broken. Try replacing it.");
             }
@@ -81,19 +81,22 @@ namespace Bronze.UserInterface
 
             var windowHandle = GCHandle.Alloc(this, GCHandleType.Weak);
             windowHandle.Target = this;
-            Glfw.SetWindowUserPointer(window, GCHandle.ToIntPtr(windowHandle));
+            Glfw.SetWindowUserPointer(Handle, GCHandle.ToIntPtr(windowHandle));
 
-            Glfw.SetWindowCloseCallback(window, ptr => ContextManager.WindowFromPointer(ptr).Closed?.Invoke());
-            Glfw.SetWindowFocusCallback(window, (ptr, gainedFocus) => ContextManager.WindowFromPointer(ptr).Focused?.Invoke(gainedFocus == 1));
-            Glfw.SetWindowPosCallback(window, (ptr, x, y) => ContextManager.WindowFromPointer(ptr).Moved?.Invoke(new Vector2I(x, y)));
-            Glfw.SetWindowSizeCallback(window, (ptr, width, height) =>
-                ContextManager.WindowFromPointer(ptr).Resized?.Invoke(new Vector2I(width, height)));
-            Glfw.SetWindowIconifyCallback(window, (ptr, minimized) => ContextManager.WindowFromPointer(ptr).Minimized?.Invoke(minimized == 1));
-            Glfw.SetDropCallback(window, (ptr, count, paths) =>
-                ContextManager.WindowFromPointer(ptr).FilesDropped?.Invoke(new List<string>(paths)));
+            Glfw.SetWindowCloseCallback(Handle, ptr => ContextManager.WindowFromHandle(ptr).Closed?.Invoke(ContextManager.WindowFromHandle(ptr)));
+            Glfw.SetWindowFocusCallback(Handle,
+                (ptr, gainedFocus) => ContextManager.WindowFromHandle(ptr).Focused?.Invoke(ContextManager.WindowFromHandle(ptr), gainedFocus == 1));
+            Glfw.SetWindowPosCallback(Handle,
+                (ptr, x, y) => ContextManager.WindowFromHandle(ptr).Moved?.Invoke(ContextManager.WindowFromHandle(ptr), new Vector2I(x, y)));
+            Glfw.SetWindowSizeCallback(Handle, (ptr, width, height) =>
+                ContextManager.WindowFromHandle(ptr).Resized?.Invoke(ContextManager.WindowFromHandle(ptr), new Vector2I(width, height)));
+            Glfw.SetWindowIconifyCallback(Handle,
+                (ptr, minimized) => ContextManager.WindowFromHandle(ptr).Minimized?.Invoke(ContextManager.WindowFromHandle(ptr), minimized == 1));
+            Glfw.SetDropCallback(Handle, (ptr, count, paths) =>
+                ContextManager.WindowFromHandle(ptr).FilesDropped?.Invoke(ContextManager.WindowFromHandle(ptr), new List<string>(paths)));
         }
 
-        public ContextInfo ContextInfo => new ContextInfo(window);
+        public ContextInfo ContextInfo => new ContextInfo(Handle);
 
         public bool VSync
         {
@@ -102,7 +105,7 @@ namespace Bronze.UserInterface
             set
             {
                 vSync = value;
-                ContextManager.RunInSeperateContext(() => Glfw.SwapInterval(value ? 1 : 0), window);
+                ContextManager.RunInSeperateContext(() => Glfw.SwapInterval(value ? 1 : 0), Handle);
             }
         }
 
@@ -110,7 +113,7 @@ namespace Bronze.UserInterface
         {
             get
             {
-                Glfw.GetFramebufferSize(window, out int width, out int height);
+                Glfw.GetFramebufferSize(Handle, out int width, out int height);
                 return new Vector2I(width, height);
             }
         }
@@ -119,22 +122,22 @@ namespace Bronze.UserInterface
         {
             get
             {
-                Glfw.GetWindowSize(window, out int width, out int height);
+                Glfw.GetWindowSize(Handle, out int width, out int height);
                 return new Vector2I(width, height);
             }
 
-            set => Glfw.SetWindowSize(window, value.X, value.X);
+            set => Glfw.SetWindowSize(Handle, value.X, value.X);
         }
 
         public Vector2I Position
         {
             get
             {
-                Glfw.GetWindowPos(window, out int x, out int y);
+                Glfw.GetWindowPos(Handle, out int x, out int y);
                 return new Vector2I(x, y);
             }
 
-            set => Glfw.SetWindowPos(window, value.X, value.Y);
+            set => Glfw.SetWindowPos(Handle, value.X, value.Y);
         }
 
         public string Title
@@ -144,7 +147,7 @@ namespace Bronze.UserInterface
             set
             {
                 title = value;
-                Glfw.SetWindowTitle(window, value);
+                Glfw.SetWindowTitle(Handle, value);
             }
         }
 
@@ -156,42 +159,42 @@ namespace Bronze.UserInterface
             {
                 Gl.ClearColor(color.X, color.Y, color.Z, 1.0f);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            }, window);
+            }, Handle);
         }
 
-        public void SwapBuffers() => Glfw.SwapBuffers(window);
+        public void SwapBuffers() => Glfw.SwapBuffers(Handle);
 
         public void Activate() => SetActive(true);
 
         public void Deactivate() => SetActive(false);
 
-        public void SetActive(bool active) => ContextManager.SetActiveContext(active ? window : ContextManager.ActiveContext);
+        public void SetActive(bool active) => ContextManager.SetActiveContext(active ? Handle : ContextManager.ActiveContext);
 
-        public bool IsActive => ContextManager.IsActive(window);
+        public bool IsActive => ContextManager.IsActive(Handle);
 
-        public bool IsOpen => Glfw.WindowShouldClose(window) != Glfw.True;
+        public bool IsOpen => Glfw.WindowShouldClose(Handle) != Glfw.True;
 
-        public bool IsMinimized => Glfw.GetWindowAttrib(window, Glfw.Iconified) == 1;
+        public bool IsMinimized => Glfw.GetWindowAttrib(Handle, Glfw.Iconified) == 1;
 
-        public bool IsMaximized => Glfw.GetWindowAttrib(window, Glfw.Maximized) == 1;
+        public bool IsMaximized => Glfw.GetWindowAttrib(Handle, Glfw.Maximized) == 1;
 
-        public bool IsFocused => Glfw.GetWindowAttrib(window, Glfw.Focused) == 1;
+        public bool IsFocused => Glfw.GetWindowAttrib(Handle, Glfw.Focused) == 1;
 
-        public bool IsVisible => Glfw.GetWindowAttrib(window, Glfw.Visible) == 1;
+        public bool IsVisible => Glfw.GetWindowAttrib(Handle, Glfw.Visible) == 1;
 
-        public void Close() => Glfw.SetWindowShouldClose(window, Glfw.True);
+        public void Close() => Glfw.SetWindowShouldClose(Handle, Glfw.True);
 
-        public void Minimize() => Glfw.IconifyWindow(window);
+        public void Minimize() => Glfw.IconifyWindow(Handle);
 
-        public void Maximize() => Glfw.MaximizeWindow(window);
+        public void Maximize() => Glfw.MaximizeWindow(Handle);
 
-        public void Restore() => Glfw.RestoreWindow(window);
+        public void Restore() => Glfw.RestoreWindow(Handle);
 
-        public void Focus() => Glfw.FocusWindow(window);
+        public void Focus() => Glfw.FocusWindow(Handle);
 
-        public void Show() => Glfw.ShowWindow(window);
+        public void Show() => Glfw.ShowWindow(Handle);
 
-        public void Hide() => Glfw.HideWindow(window);
+        public void Hide() => Glfw.HideWindow(Handle);
 
         public void SetVisible(bool visible)
         {
@@ -205,7 +208,7 @@ namespace Bronze.UserInterface
             }
         }
 
-        public void SetSizeLimits(Vector2I minSize, Vector2I maxSize) => Glfw.SetWindowSizeLimits(window, minSize.X, minSize.Y, maxSize.X, maxSize.Y);
+        public void SetSizeLimits(Vector2I minSize, Vector2I maxSize) => Glfw.SetWindowSizeLimits(Handle, minSize.X, minSize.Y, maxSize.X, maxSize.Y);
 
         public void Center()
         {

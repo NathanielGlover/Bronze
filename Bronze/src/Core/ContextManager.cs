@@ -67,14 +67,6 @@ namespace Bronze.Core
 
         internal static Window WindowFromHandle(IntPtr handle) => (Window) GCHandle.FromIntPtr(Glfw.GetWindowUserPointer(handle)).Target;
 
-        internal static Window WindowFromPointer(IntPtr ptr)
-        {
-            unsafe
-            {
-                return WindowFromHandle(new IntPtr(ptr.ToPointer()));
-            }
-        }
-
         internal static void EnsureDefaultContext()
         {
             if(DefaultContext == IntPtr.Zero)
