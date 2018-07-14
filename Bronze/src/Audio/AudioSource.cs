@@ -1,5 +1,4 @@
-﻿using System;
-using Bronze.Math;
+﻿using Bronze.Math;
 using OpenAL;
 
 namespace Bronze.Audio
@@ -7,8 +6,6 @@ namespace Bronze.Audio
     public class AudioSource
     {
         private readonly uint source;
-
-        private float startTime;
 
         public Sound Sound { get; }
 
@@ -63,16 +60,7 @@ namespace Bronze.Audio
             set => Al.Sourcei(source, Al.Looping, value ? 1 : 0);
         }
 
-        public float StartTime
-        {
-            get => startTime;
-
-            set
-            {
-                startTime = value;
-                Al.Sourcef(source, Al.SecOffset, value);
-            }
-        }
+        public float StartTime { get; set; }
 
         public Vector3 Position
         {
@@ -110,7 +98,7 @@ namespace Bronze.Audio
         public void Play()
         {
             Al.SourcePlay(source);
-            StartTime = StartTime; //OpenAl not working right here, altered start time is only applied if set while playing
+            PlaybackPosition = StartTime;
         }
 
         public void Pause() => Al.SourcePause(source);
@@ -118,6 +106,17 @@ namespace Bronze.Audio
         public void Stop() => Al.SourceStop(source);
 
         public void Rewind() => Al.SourceRewind(source);
+
+        public float PlaybackPosition
+        {
+            get
+            {
+                Al.GetSourcef(source, Al.SecOffset, out float playbackPos);
+                return playbackPos;
+            }
+            
+            set => Al.Sourcef(source, Al.SecOffset, value);
+        }
 
         public bool IsPlaying()
         {
