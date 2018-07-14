@@ -85,6 +85,7 @@ namespace Bronze.Core
 
         internal static void SetActiveContext(IntPtr context)
         {
+            if(IsActive(context)) return;
             Glfw.MakeContextCurrent(context);
             ContextChange?.Invoke(new ContextInfo(context));
         }
