@@ -9,8 +9,4 @@
       <ProjectReference Include="..\Bronze\Bronze.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="res" />
-    </ItemGroup>
-
 </Project>
