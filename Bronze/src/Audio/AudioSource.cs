@@ -7,7 +7,25 @@ namespace Bronze.Audio
     {
         private readonly uint source;
 
-        public Sound Sound { get; }
+        public Sound Sound
+        {
+            get
+            {
+                Al.GetSourcei(source, Al.Buffer, out int buffer);
+                return new Sound((uint) buffer);
+            }
+
+            set
+            {
+                Stop();
+                Al.Sourcei(source, Al.Buffer, (int) value.Buffer);
+            }
+        }
+
+        public AudioSource()
+        {
+            Al.GenSource(out source);
+        }
 
         public AudioSource(Sound sound)
         {

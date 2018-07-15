@@ -82,38 +82,47 @@ namespace Bronze.Audio
             return output;
         }
 
-        public static Sound LoadSound(string path, AudioType type = AudioType.Positional)
+        //TODO: Add support for mp3 format
+        public static Sound LoadSound(string path, AudioType type = AudioType.DontCare)
         {
-            string filePath = ResourceDirectory + path;
-            if(!File.Exists(filePath)) throw new FileNotFoundException($"Audio file \"{filePath}\" could not be found");
-
-            var file = SndFile.OpenRead(filePath);
-            if(file == null)
+            if(!File.Exists(path))
             {
-                throw new NotSupportedException($"The audio format for \"{filePath}\" is not supported");
+                path = ResourceDirectory + path;
+            }
+            
+            if(!File.Exists(path)) throw new FileNotFoundException($"Audio file \"{path}\" could not be found");
+
+            var file = SndFile.OpenRead(path);
+            if(ReferenceEquals(file, null))
+            {
+                throw new NotSupportedException($"The audio format for \"{path}\" is not supported");
             } 
             
             var data = new short[file.Frames * file.Format.Channels];
             file.ReadFrames(data, file.Frames);
-
-            int bitsPerSample;
             
             //If number of channels doesn't match requested audio type 
-            if(!(type == AudioType.Positional && file.Format.Channels == 1 || type == AudioType.Stereo && file.Format.Channels == 2))
+            int channels = file.Format.Channels;
+            if(!(type == AudioType.DontCare || type == AudioType.Positional && channels == 1 || type == AudioType.Stereo && channels == 2))
             {
                 switch(type)
                 {
                     case AudioType.Positional:
                         data = MixStereoToMono(data);
+                        channels = 1;
                         break;
                     case AudioType.Stereo:
                         data = MonoToStereo(data);
+                        channels = 2;
+                        break;
+                    case AudioType.DontCare:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(type), type, null);
                 }
             }
 
+            int bitsPerSample;
             switch(file.Format.Subtype)
             {
                 case SfFormatSubtype.PCM_S8:
@@ -128,16 +137,17 @@ namespace Bronze.Audio
                     bitsPerSample = 16;
                     break;
                 default:
-                    throw new NotSupportedException($"Audio format \"{file.Format.Subtype}\" is not supported.");
+                    throw new NotSupportedException($"Audio format subtype \"{file.Format.Subtype}\" is not supported.");
             }
             
-            return new Sound(GetSoundFormat(file.Format.Channels, bitsPerSample), data, file.Format.SampleRate);
+            return new Sound(GetSoundFormat(channels, bitsPerSample), data, file.Format.SampleRate * (file.Format.Channels / channels));
         }
     }
 
     public enum AudioType
     {
         Positional,
-        Stereo
+        Stereo,
+        DontCare
     }
 }

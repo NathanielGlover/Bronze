@@ -31,6 +31,8 @@ namespace Bronze.Audio
             }
         }
 
+        internal Sound(uint buffer) => Buffer = buffer;
+
         internal Sound(int format, short[] soundData, int sampleRate)
         {
             Al.GenBuffer(out uint buffer);
