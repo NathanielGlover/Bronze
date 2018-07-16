@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Bronze.Core;
+using Bronze.Graphics;
 using Bronze.Math;
 using glfw3;
 using OpenGL;
@@ -30,7 +30,7 @@ namespace Bronze.UserInterface
 
         public static void PostEmptyEvent() => Glfw.PostEmptyEvent();
 
-        internal readonly IntPtr Handle;
+        public readonly IntPtr Handle;
 
         private string title;
 
@@ -47,6 +47,8 @@ namespace Bronze.UserInterface
         public event Action<Window, bool> Minimized;
 
         public event Action<Window, List<string>> FilesDropped;
+
+        public Window(int width, int height, string title, WindowFlags flags = WindowFlags.Default) : this(new Vector2I(width, height), title, flags) { }
 
         public Window(Vector2I size, string title, WindowFlags flags = WindowFlags.Default)
         {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OpenGL;
 
-namespace Bronze.Core
+namespace Bronze.Graphics
 {
     public class ContextInfo
     {
@@ -48,10 +48,7 @@ namespace Bronze.Core
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() =>
-                {
-                    s = Gl.GetString(StringName.Version);
-                }, context);
+                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.Version); }, context);
                 return s;
             }
         }
@@ -61,10 +58,7 @@ namespace Bronze.Core
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() =>
-                {
-                    s = Gl.GetString(StringName.Vendor);
-                }, context);
+                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.Vendor); }, context);
                 return s;
             }
         }
@@ -74,10 +68,7 @@ namespace Bronze.Core
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() =>
-                {
-                    s = Gl.GetString(StringName.Renderer);
-                }, context);
+                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.Renderer); }, context);
                 return s;
             }
         }
@@ -87,10 +78,7 @@ namespace Bronze.Core
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() =>
-                {
-                    s = Gl.GetString(StringName.ShadingLanguageVersion);
-                }, context);
+                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.ShadingLanguageVersion); }, context);
                 return s;
             }
         }

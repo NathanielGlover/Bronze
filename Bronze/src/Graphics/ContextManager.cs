@@ -5,9 +5,8 @@ using Bronze.UserInterface;
 using glfw3;
 using Khronos;
 using OpenGL;
-using KhronosApi = Khronos.KhronosApi;
 
-namespace Bronze.Core
+namespace Bronze.Graphics
 {
     public static class ContextManager
     {
@@ -36,7 +35,7 @@ namespace Bronze.Core
             DefaultContext = Glfw.CreateWindow(1, 1, "", IntPtr.Zero, IntPtr.Zero);
             if(DefaultContext == IntPtr.Zero)
             {
-                throw new CoreException("Default OpenGL context failed to initialize.");
+                throw new NullReferenceException("Default OpenGL context failed to initialize.");
             }
 
             SetActiveContext(DefaultContext);
@@ -54,7 +53,7 @@ namespace Bronze.Core
             Glfw.WindowHint(Glfw.Doublebuffer, Glfw.True);
 
             var context = Glfw.CreateWindow(size.X, size.Y, title, IntPtr.Zero, DefaultContext);
-            if(context == IntPtr.Zero) throw new CoreException($"Context \"{title}\" failed to initialize.");
+            if(context == IntPtr.Zero) throw new NullReferenceException($"Context \"{title}\" failed to initialize.");
 
             RunInSeperateContext(() =>
             {

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Bronze.Core;
+using Bronze.Graphics;
 using glfw3;
 
 namespace Bronze.UserInterface
 {
     public class Joystick
-    {        
+    {
         private static List<Joystick> PrivateJoysticks { get; } = new List<Joystick>(MaxJoysticks);
 
         public static IReadOnlyList<Joystick> Joysticks => PrivateJoysticks;
@@ -43,19 +43,19 @@ namespace Bronze.UserInterface
         }
 
         internal Joystick(int handle) => Handle = handle;
-        
+
         internal readonly int Handle;
 
         public event Action<Joystick, bool> Connected;
 
         public bool IsConnected => Glfw.JoystickPresent(Handle) == Glfw.True;
-        
+
         public string Name => Glfw.GetJoystickName(Handle);
 
-        public float[] Axes => 
+        public float[] Axes =>
             IsConnected ? Glfw.GetJoystickAxes(Handle, out int _) : throw new NullReferenceException($"Joystick {Handle + 1} is not connected");
 
-        public byte[] ButtonStates => 
+        public byte[] ButtonStates =>
             IsConnected ? Glfw.GetJoystickButtons(Handle, out int _) : throw new NullReferenceException($"Joystick {Handle + 1} is not connected");
     }
 }
