@@ -4,9 +4,9 @@ using Bronze.UserInterface;
 
 namespace Examples
 {
-    internal class WindowExample
+    internal static class WindowExample
     {
-        public static void Main(string[] args)
+        public static void _Main(string[] args)
         {
             var window = new Window(1300, 650, "Window");
 

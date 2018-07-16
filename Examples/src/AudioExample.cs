@@ -3,7 +3,7 @@ using Bronze.Audio;
 
 namespace Examples
 {
-    internal class AudioExample
+    internal static class AudioExample
     {
         public static void _Main(string[] args)
         {

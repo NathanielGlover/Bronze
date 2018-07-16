@@ -5,7 +5,7 @@ using Bronze.UserInterface;
 
 namespace Examples
 {
-    internal class JoystickExample
+    internal static class JoystickExample
     {
         public static void _Main(string[] args)
         {
