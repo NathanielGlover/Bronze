@@ -22,8 +22,6 @@ namespace Bronze.UserInterface
 
     public class Window
     {
-        public static Window ActiveWindow => ContextManager.WindowFromHandle(ContextManager.ActiveContext);
-
         public static void PollEvents() => Glfw.PollEvents();
 
         public static void WaitEvents() => Glfw.WaitEvents();
@@ -152,6 +150,8 @@ namespace Bronze.UserInterface
                 Glfw.SetWindowTitle(Handle, value);
             }
         }
+        
+        public Monitor Monitor => new Monitor(Glfw.GetWindowMonitor(Handle));
 
         public void Clear() => Clear(new Vector3(0.1f, 0.1f, 0.1f));
 
@@ -165,14 +165,6 @@ namespace Bronze.UserInterface
         }
 
         public void SwapBuffers() => Glfw.SwapBuffers(Handle);
-
-        public void Activate() => SetActive(true);
-
-        public void Deactivate() => SetActive(false);
-
-        public void SetActive(bool active) => ContextManager.SetActiveContext(active ? Handle : ContextManager.ActiveContext);
-
-        public bool IsActive => ContextManager.IsActive(Handle);
 
         public bool IsOpen => Glfw.WindowShouldClose(Handle) != Glfw.True;
 
