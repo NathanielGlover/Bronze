@@ -4,6 +4,21 @@ namespace Bronze.Math
 {
     using M = System.Math;
 
+    public static class MathExtensions
+    {
+        public static float Trim(this float num) => Math.Trim(num);
+        
+        public static float Trim(this float num, float tolerance) => Math.Trim(num, tolerance);
+        
+        public static double Trim(this double num) => Math.Trim(num);
+        
+        public static double Trim(this double num, double tolerance) => Math.Trim(num, tolerance);
+
+        public static float Magnitude(this float num) => Math.Abs(num);
+        
+        public static double Magnitude(this double num) => Math.Abs(num);
+    }
+
     public static class Math
     {
         public const float E = (float) M.E;
@@ -91,6 +106,8 @@ namespace Bronze.Math
 
         public static float Trim(float x) => EqualsWithTolerance(x, Round(x)) ? Round(x) : x;
 
+        public static float Trim(float x, float tolerance) => EqualsWithTolerance(x, Round(x), tolerance) ? Round(x) : x;
+
         //-----------------------//
         // Double-Precision Real //
         //-----------------------//
@@ -169,6 +186,8 @@ namespace Bronze.Math
         public static double Tanh(double x) => M.Tanh(x);
 
         public static double Trim(double x) => EqualsWithTolerance(x, Round(x)) ? Round(x) : x;
+
+        public static double Trim(double x, double tolerance) => EqualsWithTolerance(x, Round(x), tolerance) ? Round(x) : x;
 
         //---------//
         // Complex //
