@@ -6,20 +6,20 @@ namespace Bronze.Math
 
     public static class MathExtensions
     {
-        public static float Trim(this float num) => Math.Trim(num);
+        public static float Trim(this float num) => Maths.Trim(num);
         
-        public static float Trim(this float num, float tolerance) => Math.Trim(num, tolerance);
+        public static float Trim(this float num, float tolerance) => Maths.Trim(num, tolerance);
         
-        public static double Trim(this double num) => Math.Trim(num);
+        public static double Trim(this double num) => Maths.Trim(num);
         
-        public static double Trim(this double num, double tolerance) => Math.Trim(num, tolerance);
+        public static double Trim(this double num, double tolerance) => Maths.Trim(num, tolerance);
 
-        public static float Magnitude(this float num) => Math.Abs(num);
+        public static float Magnitude(this float num) => Maths.Abs(num);
         
-        public static double Magnitude(this double num) => Math.Abs(num);
+        public static double Magnitude(this double num) => Maths.Abs(num);
     }
 
-    public static class Math
+    public static class Maths
     {
         public const float E = (float) M.E;
 

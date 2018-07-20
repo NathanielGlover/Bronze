@@ -115,7 +115,7 @@ namespace Bronze.Math
 
         public float Determinant => Values[0, 0] * Values[1, 1] - Values[0, 1] * Values[1, 0];
 
-        public bool IsSingular => Math.EqualsWithTolerance(Determinant, 0);
+        public bool IsSingular => Maths.EqualsWithTolerance(Determinant, 0);
 
         public float Trace => Values[0, 0] + Values[1, 1];
 
@@ -184,8 +184,8 @@ namespace Bronze.Math
         }
 
         public override string ToString() =>
-            $"|{Math.Trim(Values[0, 0])} {Math.Trim(Values[0, 1])} |\n" +
-            $"|{Math.Trim(Values[1, 0])} {Math.Trim(Values[1, 1])} |\n";
+            $"|{Maths.Trim(Values[0, 0])} {Maths.Trim(Values[0, 1])} |\n" +
+            $"|{Maths.Trim(Values[1, 0])} {Maths.Trim(Values[1, 1])} |\n";
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode() => Values.GetHashCode();

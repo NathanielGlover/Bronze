@@ -315,7 +315,7 @@ namespace Bronze.Math
             }
         }
 
-        public bool IsSingular => Math.EqualsWithTolerance(Determinant, 0);
+        public bool IsSingular => Maths.EqualsWithTolerance(Determinant, 0);
 
         public double Trace => Values[0, 0] + Values[1, 1] + Values[2, 2] + Values[3, 3];
 
@@ -392,10 +392,10 @@ namespace Bronze.Math
         }
 
         public override string ToString() =>
-            $"|{Math.Trim(Values[0, 0])} {Math.Trim(Values[0, 1])} {Math.Trim(Values[0, 2])} {Math.Trim(Values[0, 3])} |\n" +
-            $"|{Math.Trim(Values[1, 0])} {Math.Trim(Values[1, 1])} {Math.Trim(Values[1, 2])} {Math.Trim(Values[1, 3])} |\n" +
-            $"|{Math.Trim(Values[2, 0])} {Math.Trim(Values[2, 1])} {Math.Trim(Values[2, 2])} {Math.Trim(Values[2, 3])} |\n" +
-            $"|{Math.Trim(Values[3, 0])} {Math.Trim(Values[3, 1])} {Math.Trim(Values[3, 2])} {Math.Trim(Values[3, 3])} |\n";
+            $"|{Maths.Trim(Values[0, 0])} {Maths.Trim(Values[0, 1])} {Maths.Trim(Values[0, 2])} {Maths.Trim(Values[0, 3])} |\n" +
+            $"|{Maths.Trim(Values[1, 0])} {Maths.Trim(Values[1, 1])} {Maths.Trim(Values[1, 2])} {Maths.Trim(Values[1, 3])} |\n" +
+            $"|{Maths.Trim(Values[2, 0])} {Maths.Trim(Values[2, 1])} {Maths.Trim(Values[2, 2])} {Maths.Trim(Values[2, 3])} |\n" +
+            $"|{Maths.Trim(Values[3, 0])} {Maths.Trim(Values[3, 1])} {Maths.Trim(Values[3, 2])} {Maths.Trim(Values[3, 3])} |\n";
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode() => Values.GetHashCode();

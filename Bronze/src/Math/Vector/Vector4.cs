@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using static Bronze.Math.Math;
+using static Bronze.Math.Maths;
 
 namespace Bronze.Math
 {

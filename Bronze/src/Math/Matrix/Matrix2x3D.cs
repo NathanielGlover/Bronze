@@ -177,8 +177,8 @@ namespace Bronze.Math
         }
 
         public override string ToString() =>
-            $"|{Math.Trim(Values[0, 0])} {Math.Trim(Values[0, 1])} {Math.Trim(Values[0, 2])} |\n" +
-            $"|{Math.Trim(Values[1, 0])} {Math.Trim(Values[1, 1])} {Math.Trim(Values[1, 2])} |\n";
+            $"|{Maths.Trim(Values[0, 0])} {Maths.Trim(Values[0, 1])} {Maths.Trim(Values[0, 2])} |\n" +
+            $"|{Maths.Trim(Values[1, 0])} {Maths.Trim(Values[1, 1])} {Maths.Trim(Values[1, 2])} |\n";
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode() => Values.GetHashCode();
