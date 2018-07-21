@@ -7,27 +7,25 @@ namespace Bronze.Math
     public static class MathExtensions
     {
         public static float Trim(this float num) => Maths.Trim(num);
-        
+
         public static float Trim(this float num, float tolerance) => Maths.Trim(num, tolerance);
-        
+
         public static double Trim(this double num) => Maths.Trim(num);
-        
+
         public static double Trim(this double num, double tolerance) => Maths.Trim(num, tolerance);
 
         public static float Magnitude(this float num) => Maths.Abs(num);
-        
+
         public static double Magnitude(this double num) => Maths.Abs(num);
     }
 
     public static class Maths
     {
+        #region Real
+        
         public const float E = (float) M.E;
 
         public const float Pi = (float) M.PI;
-
-        //------//
-        // Real //
-        //------//
 
         public const float Tolerance = 1e-5f;
 
@@ -108,9 +106,14 @@ namespace Bronze.Math
 
         public static float Trim(float x, float tolerance) => EqualsWithTolerance(x, Round(x), tolerance) ? Round(x) : x;
 
-        //-----------------------//
-        // Double-Precision Real //
-        //-----------------------//
+        #endregion
+        
+        #region Double Precision Real
+        
+        // ReSharper disable once InconsistentNaming
+        public const double EE = M.E;
+
+        public const double PiD = M.PI;
 
         public const double ToleranceD = 1e-12;
 
@@ -189,9 +192,9 @@ namespace Bronze.Math
 
         public static double Trim(double x, double tolerance) => EqualsWithTolerance(x, Round(x), tolerance) ? Round(x) : x;
 
-        //---------//
-        // Complex //
-        //---------//
+        #endregion
+        
+        #region Complex
 
         public static readonly Complex I = new Complex(0, 1);
 
@@ -226,10 +229,10 @@ namespace Bronze.Math
         public static Complex Tan(Complex z) => Sin(z) / Cos(z);
 
         public static Complex Tanh(Complex z) => Sinh(z) / Cosh(z);
-
-        //--------------------------//
-        // Double-Precision Complex //
-        //--------------------------//
+        
+        #endregion
+        
+        #region Double Precision Complex
 
         // ReSharper disable once InconsistentNaming
         public static readonly ComplexD II = new ComplexD(0, 1);
@@ -265,5 +268,159 @@ namespace Bronze.Math
         public static ComplexD Tan(ComplexD z) => Sin(z) / Cos(z);
 
         public static ComplexD Tanh(ComplexD z) => Sinh(z) / Cosh(z);
+
+        #endregion
+        
+        #region Vector
+
+        public static Vector2 Abs(Vector2 v) => new Vector2(Abs(v.X), Abs(v.Y));
+
+        public static Vector2 Acos(Vector2 v) => new Vector2(Acos(v.X), Acos(v.Y));
+
+        public static Vector2 Asin(Vector2 v) => new Vector2(Asin(v.X), Asin(v.Y));
+
+        public static Vector2 Atan(Vector2 v) => new Vector2(Atan(v.X), Atan(v.Y));
+
+        public static Vector2 Cos(Vector2 v) => new Vector2(Cos(v.X), Cos(v.Y));
+
+        public static Vector2 Cosh(Vector2 v) => new Vector2(Cosh(v.X), Cosh(v.Y));
+
+        public static Vector2 Exp(Vector2 v) => new Vector2(Exp(v.X), Exp(v.Y));
+
+        public static Vector2 Log(Vector2 v) => new Vector2(Log(v.X), Log(v.Y));
+
+        public static Vector2 Log(Vector2 v, float b) => new Vector2(Log(v.X, b), Log(v.Y, b));
+
+        public static Vector2 Pow(Vector2 v, float b) => new Vector2(Pow(v.X, b), Log(v.Y, b));
+
+        public static Vector2 Sigm(Vector2 v) => new Vector2(Sigm(v.X), Sigm(v.Y));
+
+        public static Vector2 Sin(Vector2 v) => new Vector2(Sin(v.X), Sin(v.Y));
+
+        public static Vector2 Sinh(Vector2 v) => new Vector2(Sinh(v.X), Sinh(v.Y));
+
+        public static Vector2 Sqrt(Vector2 v) => new Vector2(Sqrt(v.X), Sqrt(v.Y));
+
+        public static Vector2 Tan(Vector2 v) => new Vector2(Tan(v.X), Tan(v.Y));
+
+        public static Vector2 Tanh(Vector2 v) => new Vector2(Tanh(v.X), Tanh(v.Y));
+        
+        #endregion
+        
+        #region Double Precision Vector
+
+        public static Vector2D Abs(Vector2D v) => new Vector2D(Abs(v.X), Abs(v.Y));
+
+        public static Vector2D Acos(Vector2D v) => new Vector2D(Acos(v.X), Acos(v.Y));
+
+        public static Vector2D Asin(Vector2D v) => new Vector2D(Asin(v.X), Asin(v.Y));
+
+        public static Vector2D Atan(Vector2D v) => new Vector2D(Atan(v.X), Atan(v.Y));
+
+        public static Vector2D Cos(Vector2D v) => new Vector2D(Cos(v.X), Cos(v.Y));
+
+        public static Vector2D Cosh(Vector2D v) => new Vector2D(Cosh(v.X), Cosh(v.Y));
+
+        public static Vector2D Exp(Vector2D v) => new Vector2D(Exp(v.X), Exp(v.Y));
+
+        public static Vector2D Log(Vector2D v) => new Vector2D(Log(v.X), Log(v.Y));
+
+        public static Vector2D Log(Vector2D v, float b) => new Vector2D(Log(v.X, b), Log(v.Y, b));
+
+        public static Vector2D Pow(Vector2D v, float b) => new Vector2D(Pow(v.X, b), Log(v.Y, b));
+
+        public static Vector2D Sigm(Vector2D v) => new Vector2D(Sigm(v.X), Sigm(v.Y));
+
+        public static Vector2D Sin(Vector2D v) => new Vector2D(Sin(v.X), Sin(v.Y));
+
+        public static Vector2D Sinh(Vector2D v) => new Vector2D(Sinh(v.X), Sinh(v.Y));
+
+        public static Vector2D Sqrt(Vector2D v) => new Vector2D(Sqrt(v.X), Sqrt(v.Y));
+
+        public static Vector2D Tan(Vector2D v) => new Vector2D(Tan(v.X), Tan(v.Y));
+
+        public static Vector2D Tanh(Vector2D v) => new Vector2D(Tanh(v.X), Tanh(v.Y));
+        
+        #endregion
+
+        #region Matrix
+
+        public static Matrix3 CreateTranslationMatrix(Vector2 translation) => new Matrix3
+        (
+            1, 0, translation.X,
+            0, 1, translation.Y,
+            0, 0, 1
+        );
+
+        public static Matrix3 CreateRotationMatrix(float rotation)
+        {
+            float cos = Cos(rotation);
+            float sin = Sin(rotation);
+
+            return new Matrix3
+            (
+                cos, -sin, 0,
+                sin, cos, 0,
+                0, 0, 1
+            );
+        }
+
+        public static Matrix3 CreateScaleMatrix(float scaleFactor) => scaleFactor * Matrix3.Identity;
+
+        public static Matrix3 CreateScaleMatrix(Vector2 scaleFactor) => new Matrix3
+        (
+            scaleFactor.X, 0, 0,
+            0, scaleFactor.Y, 0,
+            0, 0, 1
+        );
+
+        public static Matrix3 CreateShearMatrix(Vector2 shearFactor) => new Matrix3
+        (
+            1, shearFactor.X, 0,
+            shearFactor.Y, 1, 0,
+            0, 0, 1
+        );
+        
+        #endregion
+        
+        #region Double Precision Matrix
+
+        public static Matrix3D CreateTranslationMatrix(Vector2D translation) => new Matrix3D
+        (
+            1, 0, translation.X,
+            0, 1, translation.Y,
+            0, 0, 1
+        );
+
+        public static Matrix3D CreateRotationMatrix(double rotation)
+        {
+            double cos = Cos(rotation);
+            double sin = Sin(rotation);
+
+            return new Matrix3D
+            (
+                cos, -sin, 0,
+                sin, cos, 0,
+                0, 0, 1
+            );
+        }
+
+        public static Matrix3D CreateScaleMatrix(double scaleFactor) => scaleFactor * Matrix3D.Identity;
+
+        public static Matrix3D CreateScaleMatrix(Vector2D scaleFactor) => new Matrix3D
+        (
+            scaleFactor.X, 0, 0,
+            0, scaleFactor.Y, 0,
+            0, 0, 1
+        );
+
+        public static Matrix3D CreateShearMatrix(Vector2D shearFactor) => new Matrix3D
+        (
+            1, shearFactor.X, 0,
+            shearFactor.Y, 1, 0,
+            0, 0, 1
+        );
+        
+        #endregion
     }
 }
