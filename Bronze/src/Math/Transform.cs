@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Bronze.Math;
 
-namespace Bronze.Graphics
+namespace Bronze.Math
 {
     public class Transform
     {
@@ -40,15 +39,16 @@ namespace Bronze.Graphics
             ShearFactor = -ShearFactor
         };
 
-        public Vector2 ApplyTransform(Vector2 point) => ApplyTransform(new[] {point})[0];
+        public Vector2 ApplyTransform(Vector2 point) => ApplyTransform(new Vertices(new List<Vector2> {point}, Vertices.DataType.Points)).VertexData[0];
 
-        public List<Vector2> ApplyTransform(IEnumerable<Vector2> points)
+        public Vertices ApplyTransform(Vertices vertices)
         {
-            var affinePoints = (from point in points select new Vector3(point.X, point.Y, 1)).ToList();
+            var affinePoints = (from point in vertices.VertexData select new Vector3(point.X, point.Y, 1)).ToList();
             var transformationMatrix = TransformationMatrix;
 
             var transformedPoints = (from affinePoint in affinePoints select transformationMatrix * affinePoint).ToList();
-            return (from transformedPoint in transformedPoints select new Vector2(transformedPoint.X, transformedPoint.Y)).ToList();
+            return new Vertices((from transformedPoint in transformedPoints select new Vector2(transformedPoint.X, transformedPoint.Y)).ToList(),
+                vertices.VertexDataType);
         }
 
         public void Translate(Vector2 translation) => Translation += translation;

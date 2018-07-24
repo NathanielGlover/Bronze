@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Bronze.Math;
+using Bronze.Graphics;
 
-namespace Bronze.Graphics
+namespace Bronze.Math
 {
-    public class Vertices : ITransformable
+    public class Vertices
     {
         public enum DataType
         {
@@ -16,18 +16,14 @@ namespace Bronze.Graphics
             TriangleFan
         }
 
-        private readonly List<Vector2> vertexData;
-
-        public IReadOnlyList<Vector2> VertexData => Transform.ApplyTransform(vertexData);
+        public IReadOnlyList<Vector2> VertexData { get; }
 
         public DataType VertexDataType { get; }
 
         public Vertices(List<Vector2> vertexData, DataType vertexDataType)
         {
-            this.vertexData = vertexData;
+            VertexData = vertexData;
             VertexDataType = vertexDataType;
         }
-
-        public Transform Transform { get; set; } = new Transform();
     }
 }

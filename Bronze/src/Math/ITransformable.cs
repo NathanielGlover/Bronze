@@ -1,6 +1,4 @@
-using Bronze.Math;
-
-namespace Bronze.Graphics
+namespace Bronze.Math
 {
     #region Temporary Laziness Fix
 

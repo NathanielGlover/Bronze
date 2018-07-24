@@ -49,17 +49,18 @@ namespace Bronze.Math
             {
                 transformedVertexData.Add(vertices.VertexData[i]);
                 transformedVertexData[i] -= currentCentroid;
-                transformedVertexData[i] += centroid;
             }
 
             float alignmentAngle = vertexAlignmentRay - (alignAroundRay
-                                       ? ((transformedVertexData[0] - centroid).Direction + (transformedVertexData[1] - centroid).Direction) / 2
-                                       : (transformedVertexData[0] - centroid).Direction);
+                                       ? (transformedVertexData[0].Direction + transformedVertexData[1].Direction) / 2
+                                       : transformedVertexData[0].Direction);
 
-            vertices = new Vertices(transformedVertexData, vertices.VertexDataType) {Transform = {LocalOrigin = centroid}};
-            vertices.Rotate(alignmentAngle);
+            vertices = new Vertices(transformedVertexData, vertices.VertexDataType);
+            var transform = new Transform();
+            transform.Rotate(alignmentAngle);
+            transform.Translate(centroid);
 
-            return vertices;
+            return transform.ApplyTransform(vertices);
         }
     }
 }
