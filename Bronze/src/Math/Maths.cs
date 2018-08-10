@@ -80,6 +80,18 @@ namespace Bronze.Math
 
         public static float Pow(float x, float b) => (float) M.Pow(x, b);
 
+        public static float Product(Func<int, float> series, int beginning, int end)
+        {
+            float product = 1;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                product *= series(i);
+            }
+
+            return product;
+        }
+
         public static float Round(float x) => (float) M.Round(x);
 
         public static float Round(float x, int digits) => (float) M.Round(x, digits);
@@ -97,6 +109,18 @@ namespace Bronze.Math
         public static float Sinh(float x) => (float) M.Sinh(x);
 
         public static float Sqrt(float x) => (float) M.Sqrt(x);
+        
+        public static float Sum(Func<int, float> series, int beginning, int end)
+        {
+            float sum = 0;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                sum += series(i);
+            }
+
+            return sum;
+        }
 
         public static float Tan(float x) => (float) M.Tan(x);
 
@@ -164,7 +188,19 @@ namespace Bronze.Math
 
         public static double Log10(double x) => M.Log10(x);
 
-        public static double Pow(double x, double b) => M.Pow(x, b);
+        public static double Pow(double x, double b) => M.Pow(x, b); 
+
+        public static double Product(Func<int, double> series, int beginning, int end)
+        {
+            double product = 1;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                product *= series(i);
+            }
+
+            return product;
+        }
 
         public static double Round(double x) => M.Round(x);
 
@@ -182,7 +218,19 @@ namespace Bronze.Math
 
         public static double Sinh(double x) => M.Sinh(x);
 
-        public static double Sqrt(double x) => M.Sqrt(x);
+        public static double Sqrt(double x) => M.Sqrt(x);       
+
+        public static double Sum(Func<int, double> series, int beginning, int end)
+        {
+            double sum = 0;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                sum += series(i);
+            }
+
+            return sum;
+        }
 
         public static double Tan(double x) => M.Tan(x);
 
@@ -218,6 +266,18 @@ namespace Bronze.Math
 
         public static Complex Pow(Complex z, Complex b) => Exp(Log(z) * b);
 
+        public static Complex Product(Func<int, Complex> series, int beginning, int end)
+        {
+            Complex product = 1;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                product *= series(i);
+            }
+
+            return product;
+        }
+
         public static Complex Sigm(Complex z) => 1 / (1 + Exp(-z));
 
         public static Complex Sin(Complex z) => (Exp(I * z) - Exp(-I * z)) / (2 * I);
@@ -225,6 +285,18 @@ namespace Bronze.Math
         public static Complex Sinh(Complex z) => (Exp(z) - Exp(-z)) / 2;
 
         public static Complex Sqrt(Complex z) => Pow(z, 0.5f);
+
+        public static Complex Sum(Func<int, Complex> series, int beginning, int end)
+        {
+            Complex sum = 0;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                sum += series(i);
+            }
+
+            return sum;
+        }
 
         public static Complex Tan(Complex z) => Sin(z) / Cos(z);
 
@@ -257,6 +329,18 @@ namespace Bronze.Math
 
         public static ComplexD Pow(ComplexD z, ComplexD b) => Exp(Log(z) * b);
 
+        public static ComplexD Product(Func<int, ComplexD> series, int beginning, int end)
+        {
+            ComplexD product = 1;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                product *= series(i);
+            }
+
+            return product;
+        }
+
         public static ComplexD Sigm(ComplexD z) => 1 / (1 + Exp(-z));
 
         public static ComplexD Sin(ComplexD z) => (Exp(II * z) - Exp(-II * z)) / (2 * II);
@@ -264,6 +348,18 @@ namespace Bronze.Math
         public static ComplexD Sinh(ComplexD z) => (Exp(z) - Exp(-z)) / 2;
 
         public static ComplexD Sqrt(ComplexD z) => Pow(z, 0.5);
+
+        public static ComplexD Sum(Func<int, ComplexD> series, int beginning, int end)
+        {
+            ComplexD sum = 0;
+                
+            for(int i = beginning; i <= end; i++)
+            {
+                sum += series(i);
+            }
+
+            return sum;
+        }
 
         public static ComplexD Tan(ComplexD z) => Sin(z) / Cos(z);
 
