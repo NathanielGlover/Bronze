@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Bronze.Graphics;
-using Bronze.Math;
+using Bronze.Maths;
 using glfw3;
 using OpenGL;
 
@@ -28,7 +29,7 @@ namespace Bronze.UserInterface
 
         public static void PostEmptyEvent() => Glfw.PostEmptyEvent();
 
-        public readonly IntPtr Handle;
+        internal readonly IntPtr Handle;
 
         private string title;
 

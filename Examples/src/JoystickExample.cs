@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Bronze.Math;
+using Bronze.Maths;
 using Bronze.UserInterface;
 
 namespace Examples

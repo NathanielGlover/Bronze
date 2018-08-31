@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Bronze.Math;
+using Bronze.Maths;
 using glfw3;
 
 namespace Bronze.UserInterface

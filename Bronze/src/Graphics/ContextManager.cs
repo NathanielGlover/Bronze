@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Bronze.Math;
+using Bronze.Maths;
 using Bronze.UserInterface;
 using glfw3;
 using Khronos;
