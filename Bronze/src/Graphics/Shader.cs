@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Bronze.Maths;
 using OpenGL;
@@ -10,7 +11,17 @@ namespace Bronze.Graphics
 
         internal Shader(uint handle) => Handle = handle;
 
-        public int GetUniformLocation(string name) => Gl.GetUniformLocation(Handle, name);
+        //TODO: Store in uniform variable cache
+        public int GetUniformLocation(string name)
+        {
+            int location = Gl.GetUniformLocation(Handle, name);
+            if(location == -1)
+            {
+                throw new Exception($"Uniform variable \"{name}\" could not be found.");
+            }
+
+            return location;
+        }
 
         public void SetUniform(int location, float value) => Gl.Uniform1(location, value);
 
