@@ -9,40 +9,48 @@ namespace Bronze.Graphics
     {
         internal uint Handle;
 
-        internal Shader(uint handle) => Handle = handle;
-
-        //TODO: Store in uniform variable cache
-        public int GetUniformLocation(string name)
+        internal Shader(uint handle)
         {
+            Handle = handle;
+            UniformLocations = new Dictionary<string, int>();
+        }
+
+        private Dictionary<string, int> UniformLocations { get; }
+        
+        private int GetUniformLocation(string name)
+        {
+            if(UniformLocations.ContainsKey(name)) return UniformLocations[name];
+            
             int location = Gl.GetUniformLocation(Handle, name);
             if(location == -1)
             {
                 throw new Exception($"Uniform variable \"{name}\" could not be found.");
             }
-
+            
+            UniformLocations.Add(name, location);
             return location;
         }
 
-        public void SetUniform(int location, float value) => Gl.Uniform1(location, value);
+        public void SetUniform(string name, float value) => Gl.Uniform1(GetUniformLocation(name), value);
 
-        public void SetUniform(int location, int value) => Gl.Uniform1(location, value);
+        public void SetUniform(string name, int value) => Gl.Uniform1(GetUniformLocation(name), value);
 
-        public void SetUniform(int location, uint value) => Gl.Uniform1(location, value);
+        public void SetUniform(string name, uint value) => Gl.Uniform1(GetUniformLocation(name), value);
 
-        public void SetUniform(int location, params float[] values) => Gl.Uniform1(location, values);
+        public void SetUniform(string name, params float[] values) => Gl.Uniform1(GetUniformLocation(name), values);
 
-        public void SetUniform(int location, params int[] values) => Gl.Uniform1(location, values);
+        public void SetUniform(string name, params int[] values) => Gl.Uniform1(GetUniformLocation(name), values);
 
-        public void SetUniform(int location, params uint[] values) => Gl.Uniform1(location, values);
+        public void SetUniform(string name, params uint[] values) => Gl.Uniform1(GetUniformLocation(name), values);
 
-        public void SetUniform(int location, Vector2 vector) => Gl.Uniform2(location, vector.X, vector.Y);
+        public void SetUniform(string name, Vector2 vector) => Gl.Uniform2(GetUniformLocation(name), vector.X, vector.Y);
 
-        public void SetUniform(int location, Vector3 vector) => Gl.Uniform3(location, vector.X, vector.Y, vector.Z);
+        public void SetUniform(string name, Vector3 vector) => Gl.Uniform3(GetUniformLocation(name), vector.X, vector.Y, vector.Z);
 
-        public void SetUniform(int location, Vector4 vector) =>
-            Gl.Uniform4(location, vector.X, vector.Y, vector.Z, vector.W);
+        public void SetUniform(string name, Vector4 vector) =>
+            Gl.Uniform4(GetUniformLocation(name), vector.X, vector.Y, vector.Z, vector.W);
 
-        public void SetUniform(int location, params Vector2[] vectors)
+        public void SetUniform(string name, params Vector2[] vectors)
         {
             var list = new List<float>();
             foreach(var vector in vectors)
@@ -50,10 +58,10 @@ namespace Bronze.Graphics
                 list.AddRange(vector.Values);
             }
 
-            Gl.Uniform2(location, list.ToArray());
+            Gl.Uniform2(GetUniformLocation(name), list.ToArray());
         }
 
-        public void SetUniform(int location, params Vector3[] vectors)
+        public void SetUniform(string name, params Vector3[] vectors)
         {
             var list = new List<float>();
             foreach(var vector in vectors)
@@ -61,10 +69,10 @@ namespace Bronze.Graphics
                 list.AddRange(vector.Values);
             }
 
-            Gl.Uniform3(location, list.ToArray());
+            Gl.Uniform3(GetUniformLocation(name), list.ToArray());
         }
 
-        public void SetUniform(int location, params Vector4[] vectors)
+        public void SetUniform(string name, params Vector4[] vectors)
         {
             var list = new List<float>();
             foreach(var vector in vectors)
@@ -72,16 +80,16 @@ namespace Bronze.Graphics
                 list.AddRange(vector.Values);
             }
 
-            Gl.Uniform4(location, list.ToArray());
+            Gl.Uniform4(GetUniformLocation(name), list.ToArray());
         }
 
-        public void SetUniform(int location, Matrix2 matrix) => Gl.UniformMatrix2(location, true, matrix.SingleIndexedValues);
+        public void SetUniform(string name, Matrix2 matrix) => Gl.UniformMatrix2(GetUniformLocation(name), true, matrix.SingleIndexedValues);
 
-        public void SetUniform(int location, Matrix3 matrix) => Gl.UniformMatrix3(location, true, matrix.SingleIndexedValues);
+        public void SetUniform(string name, Matrix3 matrix) => Gl.UniformMatrix3(GetUniformLocation(name), true, matrix.SingleIndexedValues);
 
-        public void SetUniform(int location, Matrix4 matrix) => Gl.UniformMatrix4(location, true, matrix.SingleIndexedValues);
+        public void SetUniform(string name, Matrix4 matrix) => Gl.UniformMatrix4(GetUniformLocation(name), true, matrix.SingleIndexedValues);
 
-        public void SetUniform(int location, params Matrix2[] matrices)
+        public void SetUniform(string name, params Matrix2[] matrices)
         {
             var list = new List<float>();
             foreach(var matrix in matrices)
@@ -89,10 +97,10 @@ namespace Bronze.Graphics
                 list.AddRange(matrix.SingleIndexedValues);
             }
 
-            Gl.UniformMatrix2(location, true, list.ToArray());
+            Gl.UniformMatrix2(GetUniformLocation(name), true, list.ToArray());
         }
 
-        public void SetUniform(int location, params Matrix3[] matrices)
+        public void SetUniform(string name, params Matrix3[] matrices)
         {
             var list = new List<float>();
             foreach(var matrix in matrices)
@@ -100,10 +108,10 @@ namespace Bronze.Graphics
                 list.AddRange(matrix.SingleIndexedValues);
             }
 
-            Gl.UniformMatrix3(location, true, list.ToArray());
+            Gl.UniformMatrix3(GetUniformLocation(name), true, list.ToArray());
         }
 
-        public void SetUniform(int location, params Matrix4[] matrices)
+        public void SetUniform(string name, params Matrix4[] matrices)
         {
             var list = new List<float>();
             foreach(var matrix in matrices)
@@ -111,7 +119,7 @@ namespace Bronze.Graphics
                 list.AddRange(matrix.SingleIndexedValues);
             }
 
-            Gl.UniformMatrix4(location, true, list.ToArray());
+            Gl.UniformMatrix4(GetUniformLocation(name), true, list.ToArray());
         }
 
         public void Bind() => Gl.UseProgram(Handle);

@@ -4,20 +4,10 @@ namespace Bronze.Graphics
 {
     public abstract class FullRenderEffect : Effect
     {
-        public FullRenderEffect(Shader shader) : base(shader)
-        {
-            transformLoc = Shader.GetUniformLocation("transform");
-            viewLoc = Shader.GetUniformLocation("view");
-            projLoc = Shader.GetUniformLocation("projection");
-        }
+        public FullRenderEffect(Shader shader) : base(shader) { }
 
-        private readonly int transformLoc;
         private Matrix3 transform = Matrix3.Identity;
-
-        private readonly int viewLoc;
         private Matrix3 view = Matrix3.Identity;
-
-        private readonly int projLoc;
         private Matrix3 projection = Matrix3.Identity;
 
         internal Matrix3 Transform
@@ -26,7 +16,7 @@ namespace Bronze.Graphics
             set
             {
                 transform = value;
-                Shader.SetUniform(transformLoc, transform);
+                Shader.SetUniform("transform", transform);
             }
         }
 
@@ -36,7 +26,7 @@ namespace Bronze.Graphics
             set
             {
                 view = value;
-                Shader.SetUniform(viewLoc, view);
+                Shader.SetUniform("view", view);
             }
         }
 
@@ -46,7 +36,7 @@ namespace Bronze.Graphics
             set
             {
                 projection = value;
-                Shader.SetUniform(projLoc, projection);
+                Shader.SetUniform("projection", projection);
             }
         }
     }
