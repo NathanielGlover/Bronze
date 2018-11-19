@@ -175,8 +175,6 @@ namespace Bronze.UserInterface
 
         public bool IsFocused => Glfw.GetWindowAttrib(Handle, Glfw.Focused) == 1;
 
-        public bool IsVisible => Glfw.GetWindowAttrib(Handle, Glfw.Visible) == 1;
-
         public void Close() => Glfw.SetWindowShouldClose(Handle, Glfw.True);
 
         public void Minimize() => Glfw.IconifyWindow(Handle);
@@ -191,15 +189,20 @@ namespace Bronze.UserInterface
 
         public void Hide() => Glfw.HideWindow(Handle);
 
-        public void SetVisible(bool visible)
+        public bool Visible
         {
-            if(visible)
+            get => Glfw.GetWindowAttrib(Handle, Glfw.Visible) == 1;
+
+            set
             {
-                Show();
-            }
-            else
-            {
-                Hide();
+                if(value)
+                {
+                    Show();
+                }
+                else
+                {
+                    Hide();
+                }
             }
         }
 
