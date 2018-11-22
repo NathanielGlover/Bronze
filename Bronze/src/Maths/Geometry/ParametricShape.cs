@@ -14,9 +14,9 @@ namespace Bronze.Maths
             WindingOrder windingOrder = WindingOrder.CounterClockwise)
         {
             var tempVertices = GenerateAroundCentroid(Vector2.Zero, 0, false, windingOrder);
-            float alignmentAngle = initialExteriorAngle - (tempVertices.VertexData[1] - tempVertices.VertexData[0]).Direction;
-            var transform = new Transform {LocalOrigin = tempVertices.VertexData[0]};
-            transform.Translate(-tempVertices.VertexData[0]);
+            float alignmentAngle = initialExteriorAngle - (tempVertices[1] - tempVertices[0]).Direction;
+            var transform = new Transform {LocalOrigin = tempVertices[0]};
+            transform.Translate(-tempVertices[0]);
             transform.Translate(initialVertex);
             transform.Rotate(alignmentAngle);
             return transform.ApplyTransform(tempVertices);

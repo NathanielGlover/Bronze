@@ -5,6 +5,8 @@ namespace Bronze.Maths
 {
     public class Transform
     {
+        public static readonly Transform Identity = new Transform();
+        
         public Vector2 LocalOrigin { get; set; }
 
         public Vector2 Translation { get; set; }
@@ -39,11 +41,11 @@ namespace Bronze.Maths
             ShearFactor = -ShearFactor
         };
 
-        public Vector2 ApplyTransform(Vector2 point) => ApplyTransform(new Vertices(new List<Vector2> {point}, Vertices.DataType.Points)).VertexData[0];
+        public Vector2 ApplyTransform(Vector2 point) => ApplyTransform(new Vertices(new List<Vector2> {point}, Vertices.DataType.Points))[0];
 
         public Vertices ApplyTransform(Vertices vertices)
         {
-            var affinePoints = (from point in vertices.VertexData select new Vector3(point.X, point.Y, 1)).ToList();
+            var affinePoints = (from point in vertices select new Vector3(point.X, point.Y, 1)).ToList();
             var transformationMatrix = TransformationMatrix;
 
             var transformedPoints = (from affinePoint in affinePoints select transformationMatrix * affinePoint).ToList();

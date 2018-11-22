@@ -39,23 +39,23 @@ namespace Bronze.Maths
             WindingOrder windingOrder = WindingOrder.CounterClockwise)
         {
             var vertices = GenerateFromInitial(Vector2.Zero, 0, windingOrder);
-            var transformedVertexData = new List<Vector2>(NumVertices);
+            var transformedVertices = new List<Vector2>(NumVertices);
 
             var currentCentroid = new Vector2();
-            currentCentroid = vertices.VertexData.Aggregate(currentCentroid, (current, tempVertex) => current + tempVertex);
+            currentCentroid = vertices.Aggregate(currentCentroid, (current, tempVertex) => current + tempVertex);
             currentCentroid *= 1f / NumVertices;
 
             for(int i = 0; i < NumVertices; i++)
             {
-                transformedVertexData.Add(vertices.VertexData[i]);
-                transformedVertexData[i] -= currentCentroid;
+                transformedVertices.Add(vertices[i]);
+                transformedVertices[i] -= currentCentroid;
             }
 
             float alignmentAngle = vertexAlignmentRay - (alignAroundRay
-                                       ? (transformedVertexData[0].Direction + transformedVertexData[1].Direction) / 2
-                                       : transformedVertexData[0].Direction);
+                                       ? (transformedVertices[0].Direction + transformedVertices[1].Direction) / 2
+                                       : transformedVertices[0].Direction);
 
-            vertices = new Vertices(transformedVertexData, vertices.VertexDataType);
+            vertices = new Vertices(transformedVertices, vertices.VertexDataType);
             var transform = new Transform();
             transform.Rotate(alignmentAngle);
             transform.Translate(centroid);

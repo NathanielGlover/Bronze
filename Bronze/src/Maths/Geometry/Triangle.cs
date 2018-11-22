@@ -75,14 +75,14 @@ namespace Bronze.Maths
             WindingOrder windingOrder = WindingOrder.CounterClockwise)
         {
             var vertices = base.GenerateFromInitial(initialVertex, initialExteriorAngle, windingOrder);
-            return new Vertices(vertices.VertexData.ToList(), Vertices.DataType.Triangles);
+            return new Vertices(vertices.ToList(), Vertices.DataType.Triangles);
         }
 
         public override Vertices GenerateAroundCentroid(Vector2 centroid, float vertexAlignmentRay = 0, bool alignAroundRay = true,
             WindingOrder windingOrder = WindingOrder.CounterClockwise)
         {
             var vertices = base.GenerateAroundCentroid(centroid, vertexAlignmentRay, alignAroundRay, windingOrder);
-            return new Vertices(vertices.VertexData.ToList(), Vertices.DataType.Triangles);
+            return new Vertices(vertices.ToList(), Vertices.DataType.Triangles);
         }
 
         public override int NumVertices => 3;
