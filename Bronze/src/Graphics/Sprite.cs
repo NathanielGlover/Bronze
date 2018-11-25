@@ -4,21 +4,21 @@ namespace Bronze.Graphics
 {
     public class Sprite : IDrawable, ITransformable
     {
-        public FullRenderEffect InitialRenderEffect { get; set; } = new StandardRenderEffect();
-        
         public Model Model { get; }
-        
+        public Texture Texture { get; set; }
         protected VertexArray VertexArray { get; }
 
-        public Sprite(Model model)
+        public Sprite(Model model, Texture texture)
         {
             Model = model;
+            Texture = texture;
             VertexArray = new VertexArray(model.Vertices);
         }
-        
-        public void Draw()
+
+        public void Draw(FullRenderEffect renderEffect)
         {
-            InitialRenderEffect.Transform = Transform.TransformationMatrix;
+            renderEffect.Model = Transform.TransformationMatrix;
+            Texture.Bind();
             VertexArray.Draw();
         }
 

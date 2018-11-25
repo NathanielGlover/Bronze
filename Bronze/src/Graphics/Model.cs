@@ -34,12 +34,8 @@ namespace Bronze.Graphics
             }
 
             Area = area / 2;
-            
-            Centroid = 1f / Vertices.Count * Vertices.Aggregate((result, element) => result + element);
         }
 
         public float Area { get; }
-
-        public Vector2 Centroid { get; }
     }
 }

@@ -12,17 +12,17 @@ namespace Bronze.Graphics
             RenderTarget = renderTarget;
         }
 
-        public void Render(IDrawable drawable)
+        public void Render(IDrawable drawable, FullRenderEffect renderEffect)
         {
             ContextManager.RunInSeperateContext(() =>
             {
-                drawable.InitialRenderEffect.Bind();
+                renderEffect.Bind();
                 //TODO: Change to calculate preferred projection and view
-                drawable.InitialRenderEffect.View = Matrix3.Identity;
-                drawable.InitialRenderEffect.Projection = Matrix3.Identity;
-            
-                drawable.Draw();
-                drawable.InitialRenderEffect.Unbind();
+                renderEffect.View = Matrix3.Identity;
+                renderEffect.Projection = Matrix3.Identity;
+
+                drawable.Draw(renderEffect);
+                renderEffect.Unbind();
             }, RenderTarget.Handle);
         }
     }

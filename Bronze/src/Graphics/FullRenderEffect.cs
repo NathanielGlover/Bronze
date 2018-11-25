@@ -6,17 +6,22 @@ namespace Bronze.Graphics
     {
         public FullRenderEffect(Shader shader) : base(shader) { }
 
-        private Matrix3 transform = Matrix3.Identity;
+        private Matrix3 model = Matrix3.Identity;
         private Matrix3 view = Matrix3.Identity;
         private Matrix3 projection = Matrix3.Identity;
 
-        internal Matrix3 Transform
+        private void UpdateTransform()
         {
-            get => transform;
+            Shader.SetUniform("transform", projection * view * model);
+        }
+
+        internal Matrix3 Model
+        {
+            get => model;
             set
             {
-                transform = value;
-                Shader.SetUniform("transform", transform);
+                model = value;
+                UpdateTransform();
             }
         }
 
@@ -26,7 +31,7 @@ namespace Bronze.Graphics
             set
             {
                 view = value;
-                Shader.SetUniform("view", view);
+                UpdateTransform();
             }
         }
 
@@ -36,7 +41,7 @@ namespace Bronze.Graphics
             set
             {
                 projection = value;
-                Shader.SetUniform("projection", projection);
+                UpdateTransform();
             }
         }
     }

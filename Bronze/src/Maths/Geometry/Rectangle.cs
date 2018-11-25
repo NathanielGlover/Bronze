@@ -5,9 +5,9 @@ namespace Bronze.Maths
 {
     public class Rectangle : Polygon
     {
-        public override float Area => Width * Height;
+        public override float Area => Size.X * Size.Y;
 
-        public override float Perimeter => 2 * (Width + Height);
+        public override float Perimeter => 2 * (Size.X + Size.Y);
 
         public override int NumVertices => 4;
         
@@ -15,15 +15,17 @@ namespace Bronze.Maths
         
         public override List<float> ExteriorAngles { get; }
         
-        public float Width { get; }
-        
-        public float Height { get; }
+        public Vector2 Size { get; }
 
-        public Rectangle(float width, float height)
+        public Rectangle(float width, float height) : this(new Vector2(width, height))
         {
-            Width = width;
-            Height = height;
-            SideLengths = new List<float> {Height, Width, Height, Width};
+            
+        }
+
+        public Rectangle(Vector2 size)
+        {
+            Size = size;
+            SideLengths = new List<float> {size.Y, size.X, size.Y, size.X};
             ExteriorAngles = Enumerable.Repeat(Math.Pi / 2, 4).ToList();
         }
     }

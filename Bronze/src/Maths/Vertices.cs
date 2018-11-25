@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Bronze.Maths
 {
@@ -23,6 +24,8 @@ namespace Bronze.Maths
         public DataType VertexDataType { get; }
 
         public int Count => VertexData.Count;
+        
+        public Vector2 Centroid => 1f / Count * this.Aggregate((result, element) => result + element);
 
         public Vertices(IEnumerable<Vector2> vertexData, DataType vertexDataType)
         {

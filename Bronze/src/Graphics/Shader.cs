@@ -7,7 +7,7 @@ namespace Bronze.Graphics
 {
     public class Shader
     {
-        internal uint Handle;
+        internal readonly uint Handle;
 
         internal Shader(uint handle)
         {
@@ -16,17 +16,18 @@ namespace Bronze.Graphics
         }
 
         private Dictionary<string, int> UniformLocations { get; }
-        
+
         private int GetUniformLocation(string name)
         {
+            Bind();
             if(UniformLocations.ContainsKey(name)) return UniformLocations[name];
-            
+
             int location = Gl.GetUniformLocation(Handle, name);
             if(location == -1)
             {
                 throw new Exception($"Uniform variable \"{name}\" could not be found.");
             }
-            
+
             UniformLocations.Add(name, location);
             return location;
         }
@@ -121,6 +122,8 @@ namespace Bronze.Graphics
 
             Gl.UniformMatrix4(GetUniformLocation(name), true, list.ToArray());
         }
+
+        public void SetUniform(string name, Transform transform) => SetUniform(name, transform.TransformationMatrix);
 
         public void Bind() => Gl.UseProgram(Handle);
 

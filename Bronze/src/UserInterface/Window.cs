@@ -95,6 +95,13 @@ namespace Bronze.UserInterface
                 (ptr, minimized) => ContextManager.WindowFromHandle(ptr).Minimized?.Invoke(ContextManager.WindowFromHandle(ptr), minimized == 1));
             Glfw.SetDropCallback(Handle, (ptr, count, paths) =>
                 ContextManager.WindowFromHandle(ptr).FilesDropped?.Invoke(ContextManager.WindowFromHandle(ptr), new List<string>(paths)));
+            
+            //Set OpenGL state
+            ContextManager.RunInSeperateContext(() =>
+            {
+                Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                Gl.Enable(EnableCap.Blend);
+            }, Handle);
         }
 
         public ContextInfo ContextInfo => new ContextInfo(Handle);

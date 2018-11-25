@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Bronze.Maths;
 using OpenGL;
+using Math = System.Math;
 
 namespace Bronze.Graphics
 {
@@ -10,11 +11,15 @@ namespace Bronze.Graphics
         internal readonly uint Handle;
 
         private PrimitiveType Type { get; }
-        
+
         private int Count { get; }
+
+        private TextureCoordinates TexCoords { get; }
 
         public VertexArray(Vertices data)
         {
+            TexCoords = new TextureCoordinates(data);
+
             switch(data.VertexDataType)
             {
                 case Vertices.DataType.Points:
@@ -43,23 +48,27 @@ namespace Bronze.Graphics
             }
 
             Count = data.Count;
-            
+
             Handle = Gl.GenVertexArray();
             uint bufferHandle = Gl.GenBuffer();
-            
-            float[] floatData = new float[data.Count * 2];
+
+            float[] bufferData = new float[data.Count * 4];
             for(int i = 0; i < data.Count; i++)
             {
-                floatData[2 * i] = data[i].X;
-                floatData[2 * i + 1] = data[i].Y;
+                bufferData[4 * i] = data[i].X;
+                bufferData[4 * i + 1] = data[i].Y;
+                bufferData[4 * i + 2] = TexCoords[i].X;
+                bufferData[4 * i + 3] = TexCoords[i].Y;
             }
-            
+
             Bind();
             Gl.BindBuffer(BufferTarget.ArrayBuffer, bufferHandle);
-            Gl.BufferData(BufferTarget.ArrayBuffer, (uint) (sizeof(float) * floatData.Length), floatData, BufferUsage.StaticDraw);
-            
-            Gl.VertexAttribPointer(0, Vector2.Size, VertexAttribType.Float, false, 2 * sizeof(float), IntPtr.Zero);
+            Gl.BufferData(BufferTarget.ArrayBuffer, (uint) (sizeof(float) * bufferData.Length), bufferData, BufferUsage.StaticDraw);
+
+            Gl.VertexAttribPointer(0, Vector2.Size, VertexAttribType.Float, false, 4 * sizeof(float), IntPtr.Zero);
             Gl.EnableVertexAttribArray(0);
+            Gl.VertexAttribPointer(1, Vector2.Size, VertexAttribType.Float, false, 4 * sizeof(float), new IntPtr(2 * sizeof(float)));
+            Gl.EnableVertexAttribArray(1);
             Unbind();
         }
 
