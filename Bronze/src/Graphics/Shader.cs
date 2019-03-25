@@ -5,7 +5,7 @@ using OpenGL;
 
 namespace Bronze.Graphics
 {
-    public class Shader
+    public class Shader : GraphicsResource
     {
         internal readonly uint Handle;
 
@@ -13,6 +13,11 @@ namespace Bronze.Graphics
         {
             Handle = handle;
             UniformLocations = new Dictionary<string, int>();
+        }
+
+        ~Shader()
+        {
+            ReleaseUnmanagedResources();
         }
 
         private Dictionary<string, int> UniformLocations { get; }
@@ -125,8 +130,13 @@ namespace Bronze.Graphics
 
         public void SetUniform(string name, Transform transform) => SetUniform(name, transform.TransformationMatrix);
 
-        public void Bind() => Gl.UseProgram(Handle);
+        public override void Bind() => Gl.UseProgram(Handle);
 
-        public void Unbind() => Gl.UseProgram(0);
+        public override void Unbind() => Gl.UseProgram(0);
+
+        protected override void ReleaseUnmanagedResources()
+        {
+            Gl.DeleteProgram(Handle);
+        }
     }
 }

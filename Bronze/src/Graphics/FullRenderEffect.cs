@@ -4,7 +4,7 @@ namespace Bronze.Graphics
 {
     public abstract class FullRenderEffect : Effect
     {
-        public FullRenderEffect(Shader shader) : base(shader) { }
+        protected FullRenderEffect(Shader shader) : base(shader) { }
 
         private Matrix3 model = Matrix3.Identity;
         private Matrix3 view = Matrix3.Identity;

@@ -3,13 +3,13 @@ using OpenGL;
 
 namespace Bronze.Graphics
 {
-    public class Texture
+    public class Texture : GraphicsResource
     {
         internal readonly uint Handle;
 
-        public Vector2I Size { get; }
+        public Vector2 Size { get; }
 
-        public Texture(Vector2I size, uint handle)
+        public Texture(Vector2 size, uint handle)
         {
             Size = size;
             Handle = handle;
@@ -22,8 +22,17 @@ namespace Bronze.Graphics
             Gl.GenerateMipmap(TextureTarget.Texture2d);
         }
 
-        public void Bind() => Gl.BindTexture(TextureTarget.Texture2d, Handle);
+        public override void Bind() => Gl.BindTexture(TextureTarget.Texture2d, Handle);
 
-        public void Unbind() => Gl.BindTexture(TextureTarget.Texture2d, 0);
+        public override void Unbind() => Gl.BindTexture(TextureTarget.Texture2d, 0);
+
+        protected override void ReleaseUnmanagedResources()
+        {
+            Gl.DeleteTextures(Handle);
+        }
+
+        ~Texture() {
+            ReleaseUnmanagedResources();
+        }
     }
 }
