@@ -6,9 +6,15 @@ namespace Bronze.Maths
 {
     public abstract class ParametricShape : Shape
     {
-        public static int VertexApproximationCount { get; set; } = 64;
-
+        public static int DefaultNumApproximationVertices { get; set; }
+        
+        public int NumApproximationVertices { get; }
+        
         public abstract Func<float, Vector2> ParametricFunction { get; }
+
+        public ParametricShape(int numApproximationVertices) => NumApproximationVertices = numApproximationVertices;
+        
+        public ParametricShape() => NumApproximationVertices = DefaultNumApproximationVertices;
 
         public override Vertices GenerateFromInitial(Vector2 initialVertex, float initialExteriorAngle = 0,
             WindingOrder windingOrder = WindingOrder.CounterClockwise)
@@ -25,10 +31,10 @@ namespace Bronze.Maths
         public override Vertices GenerateAroundCentroid(Vector2 centroid, float vertexAlignmentRay = 0, bool alignAroundRay = true,
             WindingOrder windingOrder = WindingOrder.CounterClockwise)
         {
-            var vertices = new List<Vector2>(VertexApproximationCount);
+            var vertices = new List<Vector2>(NumApproximationVertices);
 
-            float parameterStep = 2 * Math.Pi / VertexApproximationCount;
-            for(int i = 0; i < VertexApproximationCount; i++)
+            float parameterStep = 2 * Math.Pi / NumApproximationVertices;
+            for(int i = 0; i < NumApproximationVertices; i++)
             {
                 vertices.Add(ParametricFunction(i * parameterStep));
             }
@@ -39,10 +45,10 @@ namespace Bronze.Maths
             
             if(windingOrder == WindingOrder.Clockwise)
             {
-                vertices.Reverse(1, VertexApproximationCount - 1);
+                vertices.Reverse(1, NumApproximationVertices - 1);
             }
 
-            var result = new Vertices(vertices, Vertices.DataType.TriangleFan);
+            var result = new Vertices(vertices);
             var transform = new Transform();
             transform.Translate(centroid);
             transform.Rotate(alignmentAngle);

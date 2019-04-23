@@ -32,7 +32,7 @@ namespace Bronze.Maths
                 tempVertices.Reverse(1, NumVertices - 1);
             }
 
-            return new Vertices((from tempVertex in tempVertices select (Vector2) tempVertex).ToList(), Vertices.DataType.TriangleFan);
+            return new Vertices((from tempVertex in tempVertices select (Vector2) tempVertex).ToList());
         }
 
         public override Vertices GenerateAroundCentroid(Vector2 centroid, float vertexAlignmentRay = 0, bool alignAroundRay = true,
@@ -55,7 +55,7 @@ namespace Bronze.Maths
                                        ? (transformedVertices[0].Direction + transformedVertices[1].Direction) / 2
                                        : transformedVertices[0].Direction);
 
-            vertices = new Vertices(transformedVertices, vertices.VertexDataType);
+            vertices = new Vertices(transformedVertices);
             var transform = new Transform();
             transform.Rotate(alignmentAngle);
             transform.Translate(centroid);

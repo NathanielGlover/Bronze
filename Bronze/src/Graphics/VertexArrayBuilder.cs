@@ -18,14 +18,14 @@ namespace Bronze.Graphics
             public bool ShouldNormalize { get; }
             public bool ShouldInterleave { get; }
 
-            public VertexAttribute(int id, byte[] data, VertexAttribType type, int attribCount, bool shouldNormalize, bool shouldInterleave)
+            public VertexAttribute(int id, byte[] data, VertexAttribType type, int count, bool normalize, bool interleave)
             {
                 Id = id;
                 Data = data;
                 Type = type;
-                AttribCount = attribCount;
-                ShouldNormalize = shouldNormalize;
-                ShouldInterleave = shouldInterleave;
+                AttribCount = count;
+                ShouldNormalize = normalize;
+                ShouldInterleave = interleave;
             }
         }
 
@@ -41,15 +41,22 @@ namespace Bronze.Graphics
             return byteList.ToArray();
         }
 
-        private readonly List<VertexAttribute> vertexAttributes = new List<VertexAttribute>();
+        private readonly List<VertexAttribute> staticVertexAttributes = new List<VertexAttribute>();
+        private readonly List<uint> bufferHandles = new List<uint>(3);
 
-        public void ClearCurrentBuild() => vertexAttributes.Clear();
+        public void ClearCurrentBuild()
+        {
+            staticVertexAttributes.Clear();
+            bufferHandles.Clear();
+        }
+
+        #region Static Attributes
 
         public VertexArrayBuilder AddVertexAttribute(int location, IEnumerable<float> data, int size, bool interleave = true)
         {
             var bytes = ToByteArray(data);
             var attribute = new VertexAttribute(location, bytes, VertexAttribType.Float, size, false, interleave);
-            vertexAttributes.Add(attribute);
+            staticVertexAttributes.Add(attribute);
             return this;
         }
 
@@ -57,7 +64,7 @@ namespace Bronze.Graphics
         {
             var bytes = ToByteArray(data);
             var attribute = new VertexAttribute(location, bytes, VertexAttribType.Double, size, false, interleave);
-            vertexAttributes.Add(attribute);
+            staticVertexAttributes.Add(attribute);
             return this;
         }
 
@@ -65,7 +72,7 @@ namespace Bronze.Graphics
         {
             var bytes = ToByteArray(data);
             var attribute = new VertexAttribute(location, bytes, VertexAttribType.Short, size, normalize, interleave);
-            vertexAttributes.Add(attribute);
+            staticVertexAttributes.Add(attribute);
             return this;
         }
 
@@ -73,14 +80,14 @@ namespace Bronze.Graphics
         {
             var bytes = ToByteArray(data);
             var attribute = new VertexAttribute(location, bytes, VertexAttribType.Int, size, normalize, interleave);
-            vertexAttributes.Add(attribute);
+            staticVertexAttributes.Add(attribute);
             return this;
         }
 
         public VertexArrayBuilder AddVertexAttribute(int location, IEnumerable<byte> data, int size, bool normalize = false, bool interleave = true)
         {
             var attribute = new VertexAttribute(location, data.ToArray(), VertexAttribType.UnsignedByte, size, normalize, interleave);
-            vertexAttributes.Add(attribute);
+            staticVertexAttributes.Add(attribute);
             return this;
         }
 
@@ -88,7 +95,7 @@ namespace Bronze.Graphics
         {
             var bytes = ToByteArray(data);
             var attribute = new VertexAttribute(location, bytes, VertexAttribType.UnsignedShort, size, normalize, interleave);
-            vertexAttributes.Add(attribute);
+            staticVertexAttributes.Add(attribute);
             return this;
         }
 
@@ -96,7 +103,7 @@ namespace Bronze.Graphics
         {
             var bytes = ToByteArray(data);
             var attribute = new VertexAttribute(location, bytes, VertexAttribType.UnsignedInt, size, normalize, interleave);
-            vertexAttributes.Add(attribute);
+            staticVertexAttributes.Add(attribute);
             return this;
         }
 
@@ -199,25 +206,37 @@ namespace Bronze.Graphics
             return AddVertexAttribute(location, rawData, 4, normalize, interleave);
         }
 
-        public VertexArray BuildVertexArray(Vertices.DataType primitiveType)
+        public VertexArrayBuilder AddVertexAttribute(int location, IEnumerable<Color> data, bool interleave = true)
         {
-            //Variables for entire buffer
-            int dataCount = (from attribute in vertexAttributes select attribute.Data.Length).Aggregate((i, i1) => i + i1);
-            int vertexSize = (from attribute in vertexAttributes select attribute.AttribSize).Aggregate((i, i1) => i + i1);
-            int numVertices = dataCount / vertexSize;
+            var rawData = new List<byte>();
+            foreach(var color in data)
+            {
+                rawData.AddRange(color.Values);
+            }
+
+            return AddVertexAttribute(location, rawData, 4, true, interleave);
+        }
+
+        #endregion
+
+        private void InitializeStaticBuffer()
+        {
+            if(!staticVertexAttributes.Any()) return;
+            
+            //Initialize buffer
+            int dataCount = (from attribute in staticVertexAttributes select attribute.Data.Length).Aggregate((i, i1) => i + i1);
+            var bufferData = new byte[dataCount];
+            uint bufferHandle = Gl.GenBuffer();
+            bufferHandles.Add(bufferHandle);
 
             //Variables for first (interleaved) section of buffer
-            var interleavedData = (from a in vertexAttributes where a.ShouldInterleave select a).ToList();
+            var interleavedData = (from a in staticVertexAttributes where a.ShouldInterleave select a).ToList();
             int interleavedCount = interleavedData.Count == 0 ? 0 : (from a in interleavedData select a.Data.Length).Aggregate((i, i1) => i + i1);
             int interleavedVertexSize = interleavedCount == 0 ? 0 : (from a in interleavedData select a.AttribSize).Aggregate((i, i1) => i + i1);
             int numInterleavedVertices = interleavedVertexSize == 0 ? 0 : interleavedCount / interleavedVertexSize;
 
-            //Variables for second (batched) section of buffer
-            var batchedData = (from a in vertexAttributes where !a.ShouldInterleave select a).ToList();
-
-            //Initialize vertex buffer
-            uint bufferHandle = Gl.GenBuffer();
-            var bufferData = new byte[dataCount];
+            //Variables for second (batched, or un-interleaved) section of buffer
+            var batchedData = (from a in staticVertexAttributes where !a.ShouldInterleave select a).ToList();
 
             //Interleave any data requested for interleaving into first section of buffer
             for(int i = 0; i < numInterleavedVertices; i++)
@@ -247,8 +266,6 @@ namespace Bronze.Graphics
             }
 
             //Begin setting vertex array parameters
-            uint handle = Gl.GenVertexArray();
-            Gl.BindVertexArray(handle);
             Gl.BindBuffer(BufferTarget.ArrayBuffer, bufferHandle);
             Gl.BufferData(BufferTarget.ArrayBuffer, (uint) bufferData.Length, bufferData, BufferUsage.StaticDraw);
 
@@ -287,11 +304,29 @@ namespace Bronze.Graphics
                 attribOffset += a.Data.Length;
             }
 
-            //Stop setting vertex array parameters and clear vertex attribute list
+            //Unbind buffer
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        //TODO: Add support for dynamic VBO objects
+        public VertexArray BuildVertexArray()
+        {
+            var allVertexAttributes = new List<VertexAttribute>();
+            allVertexAttributes.AddRange(staticVertexAttributes);
+
+            int dataCount = (from attribute in allVertexAttributes select attribute.Data.Length).Aggregate((i, i1) => i + i1);
+            int vertexSize = (from attribute in allVertexAttributes select attribute.AttribSize).Aggregate((i, i1) => i + i1);
+            int numVertices = dataCount / vertexSize;
+
+            uint vertexArrayHandle = Gl.GenVertexArray();
+            Gl.BindVertexArray(vertexArrayHandle);
+            
+            InitializeStaticBuffer();
+
             Gl.BindVertexArray(0);
             ClearCurrentBuild();
 
-            return new VertexArray(handle, numVertices, primitiveType);
+            return new VertexArray(vertexArrayHandle, numVertices, bufferHandles);
         }
     }
 }

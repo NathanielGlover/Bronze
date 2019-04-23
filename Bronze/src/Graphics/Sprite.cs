@@ -5,19 +5,19 @@ namespace Bronze.Graphics
     public class Sprite : IDrawable, ITransformable
     {
         public Texture Texture { get; set; }
-        protected VertexArray VertexArray { get; }
+        protected Model Model { get; }
 
-        public Sprite(Texture texture, VertexArray vertexArray)
+        public Sprite(Texture texture, Model model)
         {
             Texture = texture;
-            VertexArray = vertexArray;
+            Model = model;
         }
 
         public void Draw(FullRenderEffect renderEffect)
         {
             renderEffect.Model = Transform.TransformationMatrix;
             Texture.Bind();
-            VertexArray.Draw();
+            Model.Draw(renderEffect);
         }
 
         public Transform Transform { get; set; } = new Transform();

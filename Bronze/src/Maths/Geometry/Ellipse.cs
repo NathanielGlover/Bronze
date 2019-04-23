@@ -4,14 +4,14 @@ namespace Bronze.Maths
 {
     public class Ellipse : ParametricShape
     {
-        public override float Area => Math.Pi * MajorAxis * MinorAxis;
+        public override float Area => Math.Pi * SemiHorizontalAxis * SemiVerticalAxis;
 
         public override float Perimeter
         {
             get
             {
-                float a = MajorAxis;
-                float b = MinorAxis;
+                float a = SemiHorizontalAxis;
+                float b = SemiVerticalAxis;
                 float h = Math.Pow(a - b, 2) / Math.Pow(a + b, 2);
 
                 //Approximation for ellipse perimeter by Ramanujan
@@ -20,17 +20,23 @@ namespace Bronze.Maths
                 return perimeter;
             }
         }
-        
-        public override Func<float, Vector2> ParametricFunction => t => new Vector2(MajorAxis * Math.Cos(t), MinorAxis * Math.Sin(t));
 
-        public float MajorAxis { get; }
+        public override Func<float, Vector2> ParametricFunction => t => new Vector2(SemiHorizontalAxis * Math.Cos(t), SemiVerticalAxis * Math.Sin(t));
 
-        public float MinorAxis { get; }
+        public float SemiHorizontalAxis { get; }
 
-        public Ellipse(float majorAxis, float semiminorAxis)
+        public float SemiVerticalAxis { get; }
+
+        private Ellipse(float semiHorizontalAxis, float semiVerticalAxis, int numApproximationVertices) : base(numApproximationVertices)
         {
-            MajorAxis = majorAxis;
-            MinorAxis = semiminorAxis;
+            SemiHorizontalAxis = semiHorizontalAxis;
+            SemiVerticalAxis = semiVerticalAxis;
         }
+
+        public static Ellipse FromAxes(float semiHorizontalAxis, float semiVerticalAxis) =>
+            new Ellipse(semiHorizontalAxis, semiVerticalAxis, DefaultNumApproximationVertices);
+
+        public static Ellipse FromAxes(float semiHorizontalAxis, float semiVerticalAxis, int numApproximationVertices) =>
+            new Ellipse(semiHorizontalAxis, semiVerticalAxis, numApproximationVertices);
     }
 }
