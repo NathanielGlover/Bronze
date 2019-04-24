@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -12,9 +13,14 @@
         <PackageReference Include="Glfw3.NETCore" Version="1.0.1" />
         <PackageReference Include="OpenAL.NETCore" Version="1.0.1" />
         <PackageReference Include="OpenGL.Net" Version="0.7.1" />
+        <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
     </ItemGroup>
 
+    <!--TODO: Update these packages on NuGet so that I don't have to use local versions-->
     <ItemGroup>
+      <Reference Include="Glfw3.NETCore, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\RiderProjects\Glfw3.NETCore\Glfw3.NETCore\bin\Debug\netcoreapp2.1\Glfw3.NETCore.dll</HintPath>
+      </Reference>
       <Reference Include="libsndfile.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>..\..\RiderProjects\libsndfile.NET\libsndfile.NET\bin\Debug\netstandard2.0\libsndfile.NET.dll</HintPath>
       </Reference>
