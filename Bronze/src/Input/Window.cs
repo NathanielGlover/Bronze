@@ -9,7 +9,6 @@ using OpenGL;
 /*TODO: Use GLFW 3.3 features
  Monitor work area
  Monitor content scale
- Monitor user pointer
  Frame autosaving (macOS only)
  Automatic graphics switching (macOS only)
  Window opacity
@@ -18,7 +17,6 @@ using OpenGL;
  Dynamic changing of some of the window attributes
  Maximize callback
  Content scale callback
- Clipboard functions don't need window parameter anymore
  All the gamepad/joystick stuff
  All the new window hints
  */

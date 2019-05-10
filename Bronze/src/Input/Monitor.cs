@@ -10,9 +10,6 @@ namespace Bronze.Input
     {
         internal static Monitor MonitorFromHandle(IntPtr handle) => (Monitor) GCHandle.FromIntPtr(Glfw.GetMonitorUserPointer(handle)).Target;
 
-        internal static void SetCallbacks() => 
-            Glfw.SetMonitorCallback((handle, connected) => Connected?.Invoke(MonitorFromHandle(handle), connected == Glfw.Connected));
-
         public static event Action<Monitor, bool> Connected;
         
         public static Monitor PrimaryMonitor => new Monitor(Glfw.GetPrimaryMonitor());
@@ -37,6 +34,11 @@ namespace Bronze.Input
         private readonly Glfw.VidMode videoMode;
 
         private float gamma = 1;
+
+        static Monitor()
+        {
+            Glfw.SetMonitorCallback((handle, connected) => Connected?.Invoke(MonitorFromHandle(handle), connected == Glfw.Connected));
+        }
 
         internal Monitor(IntPtr handle)
         {
