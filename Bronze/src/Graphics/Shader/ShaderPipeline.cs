@@ -24,8 +24,8 @@ namespace Bronze.Graphics
 
             set
             {
-                Gl.UseProgramStage(Handle, Gl.VERTEX_SHADER_BIT, 0);
-                Gl.UseProgramStage(Handle, Gl.VERTEX_SHADER_BIT, value.Handle);
+                Gl.UseProgramStage(Handle, UseProgramStageMask.VertexShaderBit, 0);
+                Gl.UseProgramStage(Handle, UseProgramStageMask.VertexShaderBit, value.Handle);
                 vertexShader = value;
             }
         }
@@ -36,8 +36,8 @@ namespace Bronze.Graphics
 
             set
             {
-                Gl.UseProgramStage(Handle, Gl.GEOMETRY_SHADER_BIT, 0);
-                Gl.UseProgramStage(Handle, Gl.GEOMETRY_SHADER_BIT, value.Handle);
+                Gl.UseProgramStage(Handle, UseProgramStageMask.GeometryShaderBit, 0);
+                Gl.UseProgramStage(Handle, UseProgramStageMask.GeometryShaderBit, value.Handle);
                 geometryShader = value;
             }
         }
@@ -48,8 +48,8 @@ namespace Bronze.Graphics
 
             set
             {
-                Gl.UseProgramStage(Handle, Gl.FRAGMENT_SHADER_BIT, 0);
-                Gl.UseProgramStage(Handle, Gl.FRAGMENT_SHADER_BIT, value.Handle);
+                Gl.UseProgramStage(Handle, UseProgramStageMask.FragmentShaderBit, 0);
+                Gl.UseProgramStage(Handle, UseProgramStageMask.FragmentShaderBit, value.Handle);
                 fragmentShader = value;
             }
         }

@@ -46,23 +46,16 @@ namespace Bronze.Graphics
             Gl.ActiveTexture(TextureUnit.Texture0);
             Gl.BindTexture(TextureTarget.Texture2d, handle);
 
-            var repeat = TextureWrapMode.Repeat;
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, ref repeat);
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapT, ref repeat);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, TextureWrapMode.Repeat);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapT, TextureWrapMode.Repeat);
 
-            int blue = Gl.BLUE;
-            int green = Gl.GREEN;
-            int red = Gl.RED;
-            int alpha = Gl.ALPHA;
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleR, ref blue);
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleG, ref green);
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleB, ref red);
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleA, ref alpha);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleR, Gl.BLUE);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleG, Gl.GREEN);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleB, Gl.RED);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureSwizzleA, Gl.ALPHA);
 
-            var linearMipmapLinear = TextureMinFilter.LinearMipmapLinear;
-            var linear = TextureMagFilter.Linear;
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
-            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, ref linear);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, TextureMinFilter.LinearMipmapLinear);
+            Gl.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, TextureMagFilter.Linear);
 
             var bitmap = new Bitmap(image);
             var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly,

@@ -39,7 +39,7 @@ namespace Bronze.Input
                 PrivateJoysticks.Add(new Joystick(i));
             }
 
-//            Glfw.SetJoystickCallback((joy, connectionEvent) => Connected?.Invoke(Joysticks[joy], connectionEvent == Glfw.Connected));
+            Glfw.SetJoystickCallback((joy, connectionEvent) => Connected?.Invoke(Joysticks[joy], connectionEvent == Glfw.Connected));
         }
 
         internal Joystick(int handle) => Id = handle;
@@ -54,20 +54,13 @@ namespace Bronze.Input
 
         public string Guid => Glfw.GetJoystickGUID(Id);
 
-        public float[] Axes
-        {
-            get
-            {
-                if(!IsConnected) return new float[6];
-                return Glfw.GetJoystickAxes(Id, out int _);
-            }
-        }
+        public float[] Axes => !IsConnected ? new float[10] : Glfw.GetJoystickAxes(Id, out int _);
 
         public bool[] Buttons
         {
             get
             {
-                if(!IsConnected) return new bool[15];
+                if(!IsConnected) return new bool[20];
                 var buttons = Glfw.GetJoystickButtons(Id, out int _);
                 return (from button in buttons select button == Glfw.True).ToArray();
             }
@@ -77,7 +70,7 @@ namespace Bronze.Input
         {
             get
             {
-                if(!IsConnected) return new HatState[4];
+                if(!IsConnected) return new HatState[10];
                 var hats = Glfw.GetJoystickHats(Id, out int _);
                 return (from hat in hats select (HatState) hat).ToArray();
             }

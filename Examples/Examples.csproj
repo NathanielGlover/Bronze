@@ -9,5 +9,9 @@
     <ItemGroup>
       <ProjectReference Include="..\Bronze\Bronze.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="SharpFont" Version="4.0.1" />
+    </ItemGroup>
 
 </Project>
