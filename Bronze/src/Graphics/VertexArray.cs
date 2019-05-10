@@ -1,40 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Bronze.Maths;
 using OpenGL;
-using Math = System.Math;
 
 namespace Bronze.Graphics
 {
     public class VertexArray : GraphicsResource
     {
         private readonly uint[] bufferHandles;
-        internal readonly uint Handle;
-        
-        public int Count { get; }
 
-        internal VertexArray(uint handle, int count, IReadOnlyList<uint> bufferHandles)
+        internal VertexArray(uint handle, int vertexCount, int elementCount, IEnumerable<uint> bufferHandles) :
+            base(handle, Gl.BindVertexArray, Gl.DeleteVertexArrays)
         {
             this.bufferHandles = bufferHandles.ToArray();
-            Handle = handle;
-            Count = count;
+            VertexCount = vertexCount;
+            ElementCount = elementCount;
         }
 
-        public sealed override void Bind() => Gl.BindVertexArray(Handle);
+        public int VertexCount { get; }
+        public int ElementCount { get; }
 
-        public sealed override void Unbind() => Gl.BindVertexArray(0);
+        public void DrawArrays(DrawType type) => DrawArrays(type, VertexCount);
+        public void DrawArrays(DrawType type, int vertexCount) => RunActionWhileBound(() => Gl.DrawArrays((PrimitiveType) type, 0, vertexCount));
 
-        public void Draw(DrawType type)
+        public void DrawElements(DrawType type) => DrawElements(type, ElementCount);
+        public void DrawElements(DrawType type, int elementCount) =>
+            RunActionWhileBound(() => Gl.DrawElements((PrimitiveType) type, elementCount, DrawElementsType.UnsignedInt, IntPtr.Zero));
+
+        public override void Dispose()
         {
-            Bind();
-            Gl.DrawArrays((PrimitiveType) type, 0, Count);
-            Unbind();
-        }
-
-        protected override void ReleaseUnmanagedResources()
-        {
-            Gl.DeleteVertexArrays(Handle);
+            base.Dispose();
             Gl.DeleteBuffers(bufferHandles);
         }
     }

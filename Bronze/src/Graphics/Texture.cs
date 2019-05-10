@@ -5,34 +5,20 @@ namespace Bronze.Graphics
 {
     public class Texture : GraphicsResource
     {
-        internal readonly uint Handle;
-
-        public Vector2 Size { get; }
-
-        public Texture(Vector2 size, uint handle)
+        public static readonly Texture Blank = new Texture(0, Vector2I.Zero);
+        
+        internal Texture(uint handle, Vector2I size) : base(handle, tex => Gl.BindTexture(TextureTarget.Texture2d, tex), Gl.DeleteTextures)
         {
             Size = size;
-            Handle = handle;
             ContextManager.ContextChange += OnContextChange;
         }
+
+        public Vector2I Size { get; }
 
         private void OnContextChange(ContextInfo contextInfo)
         {
             Bind();
             Gl.GenerateMipmap(TextureTarget.Texture2d);
-        }
-
-        public override void Bind() => Gl.BindTexture(TextureTarget.Texture2d, Handle);
-
-        public override void Unbind() => Gl.BindTexture(TextureTarget.Texture2d, 0);
-
-        protected override void ReleaseUnmanagedResources()
-        {
-            Gl.DeleteTextures(Handle);
-        }
-
-        ~Texture() {
-            ReleaseUnmanagedResources();
         }
     }
 }
