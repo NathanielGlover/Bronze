@@ -31,8 +31,6 @@ namespace Bronze.Graphics
 
             Glx.IsRequired = true;
             Gl.BindAPI(new KhronosVersion(4, 1, "gl"), new Gl.Extensions());
-            
-            Monitor.SetCallbacks();
         }
 
         internal static IntPtr DefaultContext { get; }

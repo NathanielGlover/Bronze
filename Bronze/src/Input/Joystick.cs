@@ -22,6 +22,8 @@ namespace Bronze.Input
             LeftUp = Glfw.HatLeftUp
         }
 
+        public static readonly Joystick Null = new Joystick(-1);
+
         private static List<Joystick> PrivateJoysticks { get; } = new List<Joystick>(MaxConnectedJoysticks);
 
         public static IReadOnlyList<Joystick> Joysticks => PrivateJoysticks;
@@ -34,10 +36,10 @@ namespace Bronze.Input
 
             for(int i = 0; i < MaxConnectedJoysticks; i++)
             {
-                PrivateJoysticks.Add(new Joystick(0));
+                PrivateJoysticks.Add(new Joystick(i));
             }
 
-            Glfw.SetJoystickCallback((joy, connectionEvent) => Connected?.Invoke(Joysticks[joy], connectionEvent == Glfw.Connected));
+//            Glfw.SetJoystickCallback((joy, connectionEvent) => Connected?.Invoke(Joysticks[joy], connectionEvent == Glfw.Connected));
         }
 
         internal Joystick(int handle) => Id = handle;
@@ -50,18 +52,24 @@ namespace Bronze.Input
 
         public string Name => Glfw.GetJoystickName(Id);
 
-        public float[] Axes =>
-            IsConnected ? Glfw.GetJoystickAxes(Id, out int _) : throw new NullReferenceException($"Joystick {Id + 1} is not connected.");
+        public string Guid => Glfw.GetJoystickGUID(Id);
+
+        public float[] Axes
+        {
+            get
+            {
+                if(!IsConnected) return new float[6];
+                return Glfw.GetJoystickAxes(Id, out int _);
+            }
+        }
 
         public bool[] Buttons
         {
             get
             {
-                var buttons = IsConnected
-                    ? Glfw.GetJoystickButtons(Id, out int _)
-                    : throw new NullReferenceException($"Joystick {Id + 1} is not connected.");
-                
-                return (from button in buttons select button == 1).ToArray();
+                if(!IsConnected) return new bool[15];
+                var buttons = Glfw.GetJoystickButtons(Id, out int _);
+                return (from button in buttons select button == Glfw.True).ToArray();
             }
         }
 
@@ -69,7 +77,8 @@ namespace Bronze.Input
         {
             get
             {
-                var hats = IsConnected ? Glfw.GetJoystickHats(Id, out int _) : throw new NullReferenceException($"Joystick {Id + 1} is not connected.");
+                if(!IsConnected) return new HatState[4];
+                var hats = Glfw.GetJoystickHats(Id, out int _);
                 return (from hat in hats select (HatState) hat).ToArray();
             }
         }
