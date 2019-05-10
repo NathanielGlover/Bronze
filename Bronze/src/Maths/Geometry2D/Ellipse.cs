@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Bronze.Graphics;
 
 namespace Bronze.Maths
 {
@@ -22,6 +24,10 @@ namespace Bronze.Maths
         }
 
         public override Func<float, Vector2> ParametricFunction => t => new Vector2(SemiHorizontalAxis * Math.Cos(t), SemiVerticalAxis * Math.Sin(t));
+        
+        public override IEnumerable<uint> GetElementIndices() => new uint[0];
+        
+        public override DrawType GetPreferredDrawType() => DrawType.TriangleFan;
 
         public float SemiHorizontalAxis { get; }
 

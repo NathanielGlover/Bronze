@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Bronze.Graphics;
 
 namespace Bronze.Maths
 {
@@ -8,6 +10,10 @@ namespace Bronze.Maths
 
         public sealed override float Perimeter => Circumference;
         
+        public override IEnumerable<uint> GetElementIndices() => new uint[0];
+        
+        public override DrawType GetPreferredDrawType() => DrawType.TriangleFan;
+
         public float Radius { get; }
 
         public float Circumference => 2 * Math.Pi * Radius;

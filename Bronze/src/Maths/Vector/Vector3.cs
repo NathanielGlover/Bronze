@@ -72,6 +72,8 @@ namespace Bronze.Maths
         public static implicit operator Vector3D(Vector3 vec) => new Vector3D(vec.X, vec.Y, vec.Z);
 
         public static explicit operator Vector3I(Vector3 vec) => new Vector3I((int) vec.X, (int) vec.Y, (int) vec.Z);
+        
+        public static explicit operator Vector2(Vector3 vec) => new Vector2(vec.X, vec.Y);
 
         public override string ToString() => $"({Trim(X)}, {Trim(Y)}, {Trim(Z)})";
 

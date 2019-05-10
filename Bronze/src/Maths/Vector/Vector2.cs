@@ -73,6 +73,8 @@ namespace Bronze.Maths
         public static implicit operator Vector2D(Vector2 vec) => new Vector2D(vec.X, vec.Y);
 
         public static explicit operator Vector2I(Vector2 vec) => new Vector2I((int) vec.X, (int) vec.Y);
+        
+        public static implicit operator Vector3(Vector2 vec) => new Vector3(vec.X, vec.Y, 0);
 
         public override string ToString() => $"({Trim(X)}, {Trim(Y)})";
 

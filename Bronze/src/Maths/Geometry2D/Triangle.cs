@@ -71,19 +71,9 @@ namespace Bronze.Maths
             AngleAC = Math.Acos((b * b - a * a - c * c) / (-2 * a * c));
         }
 
-        public override Vertices GenerateFromInitial(Vector2 initialVertex, float initialExteriorAngle = 0,
-            WindingOrder windingOrder = WindingOrder.CounterClockwise)
-        {
-            var vertices = base.GenerateFromInitial(initialVertex, initialExteriorAngle, windingOrder);
-            return new Vertices(vertices.ToList());
-        }
-
-        public override Vertices GenerateAroundCentroid(Vector2 centroid, float vertexAlignmentRay = 0, bool alignAroundRay = true,
-            WindingOrder windingOrder = WindingOrder.CounterClockwise)
-        {
-            var vertices = base.GenerateAroundCentroid(centroid, vertexAlignmentRay, alignAroundRay, windingOrder);
-            return new Vertices(vertices.ToList());
-        }
+        public override IEnumerable<uint> GetElementIndices() => new uint[0];
+        
+        public override DrawType GetPreferredDrawType() => DrawType.Triangles;
 
         public override int NumVertices => 3;
     }

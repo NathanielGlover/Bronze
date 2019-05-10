@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Bronze.Graphics;
 
 namespace Bronze.Maths
 {
@@ -10,17 +11,18 @@ namespace Bronze.Maths
         public override float Perimeter => 2 * (Size.X + Size.Y);
 
         public override int NumVertices => 4;
-        
+
+        public override IEnumerable<uint> GetElementIndices() => new uint[0];
+
+        public override DrawType GetPreferredDrawType() => DrawType.TriangleFan;
+
         public override List<float> SideLengths { get; }
-        
+
         public override List<float> ExteriorAngles { get; }
-        
+
         public Vector2 Size { get; }
 
-        public Rectangle(float width, float height) : this(new Vector2(width, height))
-        {
-            
-        }
+        public Rectangle(float width, float height) : this(new Vector2(width, height)) { }
 
         public Rectangle(Vector2 size)
         {

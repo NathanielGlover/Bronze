@@ -22,7 +22,7 @@ namespace Bronze.Maths
     public static class Math
     {
         #region Real
-        
+
         public const float E = (float) M.E;
 
         public const float Pi = (float) M.PI;
@@ -83,7 +83,7 @@ namespace Bronze.Maths
         public static float Product(Func<int, float> series, int beginning, int end)
         {
             float product = 1;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 product *= series(i);
@@ -109,11 +109,11 @@ namespace Bronze.Maths
         public static float Sinh(float x) => (float) M.Sinh(x);
 
         public static float Sqrt(float x) => (float) M.Sqrt(x);
-        
+
         public static float Sum(Func<int, float> series, int beginning, int end)
         {
             float sum = 0;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 sum += series(i);
@@ -131,9 +131,9 @@ namespace Bronze.Maths
         public static float Trim(float x, float tolerance) => EqualsWithTolerance(x, Round(x), tolerance) ? Round(x) : x;
 
         #endregion
-        
+
         #region Double Precision Real
-        
+
         // ReSharper disable once InconsistentNaming
         public const double EE = M.E;
 
@@ -188,12 +188,12 @@ namespace Bronze.Maths
 
         public static double Log10(double x) => M.Log10(x);
 
-        public static double Pow(double x, double b) => M.Pow(x, b); 
+        public static double Pow(double x, double b) => M.Pow(x, b);
 
         public static double Product(Func<int, double> series, int beginning, int end)
         {
             double product = 1;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 product *= series(i);
@@ -218,12 +218,12 @@ namespace Bronze.Maths
 
         public static double Sinh(double x) => M.Sinh(x);
 
-        public static double Sqrt(double x) => M.Sqrt(x);       
+        public static double Sqrt(double x) => M.Sqrt(x);
 
         public static double Sum(Func<int, double> series, int beginning, int end)
         {
             double sum = 0;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 sum += series(i);
@@ -241,7 +241,7 @@ namespace Bronze.Maths
         public static double Trim(double x, double tolerance) => EqualsWithTolerance(x, Round(x), tolerance) ? Round(x) : x;
 
         #endregion
-        
+
         #region Complex
 
         public static readonly Complex I = new Complex(0, 1);
@@ -269,7 +269,7 @@ namespace Bronze.Maths
         public static Complex Product(Func<int, Complex> series, int beginning, int end)
         {
             Complex product = 1;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 product *= series(i);
@@ -289,7 +289,7 @@ namespace Bronze.Maths
         public static Complex Sum(Func<int, Complex> series, int beginning, int end)
         {
             Complex sum = 0;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 sum += series(i);
@@ -301,9 +301,9 @@ namespace Bronze.Maths
         public static Complex Tan(Complex z) => Sin(z) / Cos(z);
 
         public static Complex Tanh(Complex z) => Sinh(z) / Cosh(z);
-        
+
         #endregion
-        
+
         #region Double Precision Complex
 
         // ReSharper disable once InconsistentNaming
@@ -332,7 +332,7 @@ namespace Bronze.Maths
         public static ComplexD Product(Func<int, ComplexD> series, int beginning, int end)
         {
             ComplexD product = 1;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 product *= series(i);
@@ -352,7 +352,7 @@ namespace Bronze.Maths
         public static ComplexD Sum(Func<int, ComplexD> series, int beginning, int end)
         {
             ComplexD sum = 0;
-                
+
             for(int i = beginning; i <= end; i++)
             {
                 sum += series(i);
@@ -366,7 +366,7 @@ namespace Bronze.Maths
         public static ComplexD Tanh(ComplexD z) => Sinh(z) / Cosh(z);
 
         #endregion
-        
+
         #region Vector
 
         public static Vector2 Abs(Vector2 v) => new Vector2(Abs(v.X), Abs(v.Y));
@@ -400,9 +400,9 @@ namespace Bronze.Maths
         public static Vector2 Tan(Vector2 v) => new Vector2(Tan(v.X), Tan(v.Y));
 
         public static Vector2 Tanh(Vector2 v) => new Vector2(Tanh(v.X), Tanh(v.Y));
-        
+
         #endregion
-        
+
         #region Double Precision Vector
 
         public static Vector2D Abs(Vector2D v) => new Vector2D(Abs(v.X), Abs(v.Y));
@@ -436,7 +436,7 @@ namespace Bronze.Maths
         public static Vector2D Tan(Vector2D v) => new Vector2D(Tan(v.X), Tan(v.Y));
 
         public static Vector2D Tanh(Vector2D v) => new Vector2D(Tanh(v.X), Tanh(v.Y));
-        
+
         #endregion
 
         #region Matrix
@@ -476,9 +476,52 @@ namespace Bronze.Maths
             shearFactor.Y, 1, 0,
             0, 0, 1
         );
-        
+
+        public static Matrix4 CreateTranslationMatrix(Vector3 translation) => new Matrix4
+        (
+            1, 0, 0, translation.X,
+            0, 1, 0, translation.Y,
+            0, 0, 1, translation.Z,
+            0, 0, 0, 1
+        );
+
+        public static Matrix4 CreateRotationMatrix(float rotation, Vector3 axis)
+        {
+            float cos = Cos(rotation);
+            float sin = Sin(rotation);
+            float oneMinusCos = 1 - cos;
+            axis = axis.Normalize();
+
+            float x = axis.X;
+            float y = axis.Y;
+            float z = axis.Z;
+
+            float xx = Pow(x, 2);
+            float yy = Pow(y, 2);
+            float zz = Pow(z, 2);
+            float xy = x * y;
+            float yz = y * z;
+            float zx = z * x;
+
+            return new Matrix4
+            (
+                xx * oneMinusCos + cos, xy * oneMinusCos - z * sin, zx * oneMinusCos + y * sin, 0,
+                xy * oneMinusCos + z * sin, yy * oneMinusCos + cos, yz * oneMinusCos - x * sin, 0,
+                zx * oneMinusCos - y * sin, yz * oneMinusCos + x * sin, zz * oneMinusCos + cos, 0,
+                0, 0, 0, 1
+            );
+        }
+
+        public static Matrix4 CreateScaleMatrix(Vector3 scaleFactor) => new Matrix4
+        (
+            scaleFactor.X, 0, 0, 0,
+            0, scaleFactor.Y, 0, 0,
+            0, 0, scaleFactor.Z, 0,
+            0, 0, 0, 1
+        );
+
         #endregion
-        
+
         #region Double Precision Matrix
 
         public static Matrix3D CreateTranslationMatrix(Vector2D translation) => new Matrix3D
@@ -516,7 +559,7 @@ namespace Bronze.Maths
             shearFactor.Y, 1, 0,
             0, 0, 1
         );
-        
+
         #endregion
     }
 }

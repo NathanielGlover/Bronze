@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Bronze.Graphics;
 
 namespace Bronze.Maths
 {
     public abstract class ParametricShape : Shape
     {
-        public static int DefaultNumApproximationVertices { get; set; }
+        public static int DefaultNumApproximationVertices { get; set; } = 100;
         
         public int NumApproximationVertices { get; }
         
@@ -20,7 +19,7 @@ namespace Bronze.Maths
             WindingOrder windingOrder = WindingOrder.CounterClockwise)
         {
             var tempVertices = GenerateAroundCentroid(Vector2.Zero, 0, false, windingOrder);
-            float alignmentAngle = initialExteriorAngle - (tempVertices[1] - tempVertices[0]).Direction;
+            float alignmentAngle = initialExteriorAngle - ((Vector2) (tempVertices[1] - tempVertices[0])).Direction;
             var transform = new Transform {LocalOrigin = tempVertices[0]};
             transform.Translate(-tempVertices[0]);
             transform.Translate(initialVertex);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Bronze.Graphics;
 
 namespace Bronze.Maths
 {
@@ -52,5 +53,9 @@ namespace Bronze.Maths
         public override float Area { get; }
 
         public override float Perimeter => NumVertices * SideLength;
+        
+        public override IEnumerable<uint> GetElementIndices() => new uint[0];
+        
+        public override DrawType GetPreferredDrawType() => DrawType.TriangleFan;
     }
 }

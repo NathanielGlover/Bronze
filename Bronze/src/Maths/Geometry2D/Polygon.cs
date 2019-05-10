@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Bronze.Graphics;
 
 namespace Bronze.Maths
 {
@@ -42,12 +41,12 @@ namespace Bronze.Maths
             var transformedVertices = new List<Vector2>(NumVertices);
 
             var currentCentroid = new Vector2();
-            currentCentroid = vertices.Aggregate(currentCentroid, (current, tempVertex) => current + tempVertex);
+            currentCentroid = vertices.Aggregate(currentCentroid, (current, tempVertex) => (Vector2) (current + tempVertex));
             currentCentroid *= 1f / NumVertices;
 
             for(int i = 0; i < NumVertices; i++)
             {
-                transformedVertices.Add(vertices[i]);
+                transformedVertices.Add((Vector2) vertices[i]);
                 transformedVertices[i] -= currentCentroid;
             }
 
