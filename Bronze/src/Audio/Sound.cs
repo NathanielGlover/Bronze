@@ -1,5 +1,4 @@
-﻿using System;
-using OpenAL;
+﻿using OpenAL;
 
 namespace Bronze.Audio
 {

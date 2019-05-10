@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Bronze.Input;
 using Bronze.Maths;
-using Bronze.UserInterface;
 using glfw3;
 using Khronos;
 using OpenGL;
@@ -52,7 +52,7 @@ namespace Bronze.Graphics
             var context = Glfw.CreateWindow(size.X, size.Y, title, IntPtr.Zero, DefaultContext);
             if(context == IntPtr.Zero) throw new NullReferenceException($"Context \"{title}\" failed to initialize.");
 
-            RunInSeperateContext(() =>
+            RunInSeparateContext(() =>
             {
                 Glx.IsRequired = true;
                 Gl.BindAPI(new KhronosVersion(4, 1, "gl"), new Gl.Extensions());
@@ -69,7 +69,7 @@ namespace Bronze.Graphics
                 throw new NullReferenceException("Default OpenGL context was prematurely destroyed. Please don't do that.");
         }
 
-        internal static void RunInSeperateContext(Action task, IntPtr context)
+        internal static void RunInSeparateContext(Action task, IntPtr context)
         {
             var currentContext = ActiveContext;
             SetActiveContext(context);
@@ -77,7 +77,7 @@ namespace Bronze.Graphics
             SetActiveContext(currentContext);
         }
 
-        internal static void RunInDefaultContext(Action task) => RunInSeperateContext(task, DefaultContext);
+        internal static void RunInDefaultContext(Action task) => RunInSeparateContext(task, DefaultContext);
 
         internal static void SetActiveContext(IntPtr context)
         {

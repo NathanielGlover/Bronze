@@ -3,11 +3,11 @@ using OpenAL;
 
 namespace Bronze.Audio
 {
-    internal static class AudioContextManager
+    internal static class ContextManager
     {
         private static readonly IntPtr AudioContext;
 
-        static AudioContextManager()
+        static ContextManager()
         {
             var device = Alc.OpenDevice(null);
             if(device != IntPtr.Zero)

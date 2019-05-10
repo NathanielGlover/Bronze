@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using OpenAL;
 using libsndfile.NET;
 
@@ -37,7 +36,7 @@ namespace Bronze.Audio
 
         static AudioLoader()
         {
-            AudioContextManager.EnsureContext();
+            ContextManager.EnsureContext();
         }
 
         private static int GetSoundFormat(int channels, int bits)
@@ -89,18 +88,18 @@ namespace Bronze.Audio
             {
                 path = ResourceDirectory + path;
             }
-            
+
             if(!File.Exists(path)) throw new FileNotFoundException($"Audio file \"{path}\" could not be found");
 
             var file = SndFile.OpenRead(path);
             if(ReferenceEquals(file, null))
             {
                 throw new NotSupportedException($"The audio format for \"{path}\" is not supported");
-            } 
-            
+            }
+
             var data = new short[file.Frames * file.Format.Channels];
             file.ReadFrames(data, file.Frames);
-            
+
             //If number of channels doesn't match requested audio type 
             int channels = file.Format.Channels;
             if(!(type == AudioType.DontCare || type == AudioType.Positional && channels == 1 || type == AudioType.Stereo && channels == 2))
@@ -139,7 +138,7 @@ namespace Bronze.Audio
                 default:
                     throw new NotSupportedException($"Audio format subtype \"{file.Format.Subtype}\" is not supported.");
             }
-            
+
             return new Sound(GetSoundFormat(channels, bitsPerSample), data, file.Format.SampleRate * (file.Format.Channels / channels));
         }
     }

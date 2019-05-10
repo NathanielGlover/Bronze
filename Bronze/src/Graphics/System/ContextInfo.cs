@@ -16,7 +16,7 @@ namespace Bronze.Graphics
             {
                 var extensions = new List<string>();
 
-                ContextManager.RunInSeperateContext(() =>
+                ContextManager.RunInSeparateContext(() =>
                 {
                     Gl.Get(GetPName.NumExtensions, out int numExtensions);
                     for(int i = 0; i < numExtensions; i++) extensions.Add(Gl.GetString(StringName.Extensions, (uint) i));
@@ -31,7 +31,7 @@ namespace Bronze.Graphics
             get
             {
                 int major = -1, minor = -1;
-                ContextManager.RunInSeperateContext(() =>
+                ContextManager.RunInSeparateContext(() =>
                 {
                     Gl.Get(Gl.MAJOR_VERSION, out major);
                     Gl.Get(Gl.MINOR_VERSION, out minor);
@@ -45,7 +45,7 @@ namespace Bronze.Graphics
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.Version); }, context);
+                ContextManager.RunInSeparateContext(() => { s = Gl.GetString(StringName.Version); }, context);
                 return s;
             }
         }
@@ -55,7 +55,7 @@ namespace Bronze.Graphics
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.Vendor); }, context);
+                ContextManager.RunInSeparateContext(() => { s = Gl.GetString(StringName.Vendor); }, context);
                 return s;
             }
         }
@@ -65,7 +65,7 @@ namespace Bronze.Graphics
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.Renderer); }, context);
+                ContextManager.RunInSeparateContext(() => { s = Gl.GetString(StringName.Renderer); }, context);
                 return s;
             }
         }
@@ -75,7 +75,7 @@ namespace Bronze.Graphics
             get
             {
                 string s = "";
-                ContextManager.RunInSeperateContext(() => { s = Gl.GetString(StringName.ShadingLanguageVersion); }, context);
+                ContextManager.RunInSeparateContext(() => { s = Gl.GetString(StringName.ShadingLanguageVersion); }, context);
                 return s;
             }
         }

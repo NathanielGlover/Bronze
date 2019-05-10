@@ -1,4 +1,4 @@
-﻿using Bronze.Math;
+﻿using Bronze.Maths;
 using OpenAL;
 
 namespace Bronze.Audio
@@ -7,7 +7,7 @@ namespace Bronze.Audio
     {
         static Listener()
         {
-            AudioContextManager.EnsureContext();
+            ContextManager.EnsureContext();
         }
 
         public static Vector3 Position

@@ -1,4 +1,4 @@
-﻿using Bronze.Math;
+﻿using Bronze.Maths;
 using OpenAL;
 
 namespace Bronze.Audio
@@ -132,7 +132,7 @@ namespace Bronze.Audio
                 Al.GetSourcef(source, Al.SecOffset, out float playbackPos);
                 return playbackPos;
             }
-            
+
             set => Al.Sourcef(source, Al.SecOffset, value);
         }
 

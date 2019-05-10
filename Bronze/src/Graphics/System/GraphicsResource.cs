@@ -6,6 +6,7 @@ namespace Bronze.Graphics
     {
         protected GraphicsResource(uint handle, Action<uint> bindFunction, Action<uint> deleteFunction)
         {
+            ContextManager.EnsureDefaultContext();
             Handle = handle;
             BindFunction = bindFunction;
             DeleteFunction = deleteFunction;
