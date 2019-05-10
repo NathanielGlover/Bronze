@@ -1,13 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Bronze.Graphics;
 using Bronze.Maths;
 using glfw3;
 using OpenGL;
 
-namespace Bronze.UserInterface
+/*TODO: Use GLFW 3.3 features
+ Monitor work area
+ Monitor content scale
+ Monitor user pointer
+ Frame autosaving (macOS only)
+ Automatic graphics switching (macOS only)
+ Window opacity
+ Window content scale (?)
+ Request attention to window/application
+ Dynamic changing of some of the window attributes
+ Maximize callback
+ Content scale callback
+ Clipboard functions don't need window parameter anymore
+ All the gamepad/joystick stuff
+ All the new window hints
+ */
+
+namespace Bronze.Input
 {
     [Flags]
     public enum WindowFlags
@@ -23,6 +39,8 @@ namespace Bronze.UserInterface
 
     public class Window
     {
+        internal static Window WindowFromHandle(IntPtr handle) => (Window) GCHandle.FromIntPtr(Glfw.GetWindowUserPointer(handle)).Target;
+        
         public static void PollEvents() => Glfw.PollEvents();
 
         public static void WaitEvents() => Glfw.WaitEvents();
@@ -70,11 +88,12 @@ namespace Bronze.UserInterface
             Glfw.WindowHint(Glfw.Floating, floating);
 
             Handle = ContextManager.CreateContext(size, title);
-
             if(Handle == IntPtr.Zero)
             {
                 throw new Exception("Window failed to create. Your computer is probably broken. Try replacing it.");
             }
+
+            ContextManager.SetActiveContext(Handle);
 
             VSync = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX;
 
@@ -84,25 +103,23 @@ namespace Bronze.UserInterface
             windowHandle.Target = this;
             Glfw.SetWindowUserPointer(Handle, GCHandle.ToIntPtr(windowHandle));
 
-            Glfw.SetWindowCloseCallback(Handle, ptr => ContextManager.WindowFromHandle(ptr).Closed?.Invoke(ContextManager.WindowFromHandle(ptr)));
-            Glfw.SetWindowFocusCallback(Handle,
-                (ptr, gainedFocus) => ContextManager.WindowFromHandle(ptr).Focused?.Invoke(ContextManager.WindowFromHandle(ptr), gainedFocus == 1));
-            Glfw.SetWindowPosCallback(Handle,
-                (ptr, x, y) => ContextManager.WindowFromHandle(ptr).Moved?.Invoke(ContextManager.WindowFromHandle(ptr), new Vector2I(x, y)));
+            Glfw.SetWindowCloseCallback(Handle, ptr => WindowFromHandle(ptr).Closed?.Invoke(WindowFromHandle(ptr)));
+            Glfw.SetWindowFocusCallback(Handle, (ptr, gainedFocus) => WindowFromHandle(ptr).Focused?.Invoke(WindowFromHandle(ptr), gainedFocus == 1));
+            Glfw.SetWindowPosCallback(Handle, (ptr, x, y) => WindowFromHandle(ptr).Moved?.Invoke(WindowFromHandle(ptr), new Vector2I(x, y)));
             Glfw.SetWindowSizeCallback(Handle, (ptr, width, height) =>
-                ContextManager.WindowFromHandle(ptr).Resized?.Invoke(ContextManager.WindowFromHandle(ptr), new Vector2I(width, height)));
-            Glfw.SetWindowIconifyCallback(Handle,
-                (ptr, minimized) => ContextManager.WindowFromHandle(ptr).Minimized?.Invoke(ContextManager.WindowFromHandle(ptr), minimized == 1));
+                WindowFromHandle(ptr).Resized?.Invoke(WindowFromHandle(ptr), new Vector2I(width, height)));
+            Glfw.SetWindowIconifyCallback(Handle, (ptr, minimized) => WindowFromHandle(ptr).Minimized?.Invoke(WindowFromHandle(ptr), minimized == 1));
             Glfw.SetDropCallback(Handle, (ptr, count, paths) =>
-                ContextManager.WindowFromHandle(ptr).FilesDropped?.Invoke(ContextManager.WindowFromHandle(ptr), new List<string>(paths)));
-            
+                WindowFromHandle(ptr).FilesDropped?.Invoke(WindowFromHandle(ptr), new List<string>(paths)));
+
             //Set OpenGL state
-            ContextManager.RunInSeperateContext(() =>
-            {
-                Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-                Gl.Enable(EnableCap.Blend);
-            }, Handle);
+            Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            Gl.Enable(EnableCap.Blend);
+            Gl.Enable(EnableCap.Multisample);
+            Gl.Enable(EnableCap.DepthTest);
         }
+
+        ~Window() => Glfw.DestroyWindow(Handle);
 
         public ContextInfo ContextInfo => new ContextInfo(Handle);
 
@@ -113,7 +130,7 @@ namespace Bronze.UserInterface
             set
             {
                 vSync = value;
-                ContextManager.RunInSeperateContext(() => Glfw.SwapInterval(value ? 1 : 0), Handle);
+                ContextManager.RunInSeparateContext(() => Glfw.SwapInterval(value ? 1 : 0), Handle);
             }
         }
 
@@ -158,16 +175,16 @@ namespace Bronze.UserInterface
                 Glfw.SetWindowTitle(Handle, value);
             }
         }
-        
+
         public Monitor Monitor => new Monitor(Glfw.GetWindowMonitor(Handle));
 
-        public void Clear() => Clear(new Vector3(0.1f, 0.1f, 0.1f));
+        public void Clear() => Clear(Color.Black);
 
-        public void Clear(Vector3 color)
+        public void Clear(Color color)
         {
-            ContextManager.RunInSeperateContext(() =>
+            ContextManager.RunInSeparateContext(() =>
             {
-                Gl.ClearColor(color.X, color.Y, color.Z, 1.0f);
+                Gl.ClearColor(color.Red, color.Green, color.Blue, color.Alpha);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             }, Handle);
         }

@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Bronze.Maths;
 using glfw3;
 
-namespace Bronze.UserInterface
+namespace Bronze.Input
 {
     public class Monitor
     {
+        internal static Monitor MonitorFromHandle(IntPtr handle) => (Monitor) GCHandle.FromIntPtr(Glfw.GetMonitorUserPointer(handle)).Target;
+
+        internal static void SetCallbacks() => 
+            Glfw.SetMonitorCallback((handle, connected) => Connected?.Invoke(MonitorFromHandle(handle), connected == Glfw.Connected));
+
+        public static event Action<Monitor, bool> Connected;
+        
         public static Monitor PrimaryMonitor => new Monitor(Glfw.GetPrimaryMonitor());
 
         public static List<Monitor> ConnectedMonitors
@@ -34,6 +42,10 @@ namespace Bronze.UserInterface
         {
             Handle = handle;
             videoMode = Glfw.GetVideoMode(handle);
+            
+            var monitorHandle = GCHandle.Alloc(this, GCHandleType.Weak);
+            monitorHandle.Target = this;
+            Glfw.SetMonitorUserPointer(Handle, GCHandle.ToIntPtr(monitorHandle));
         }
 
         public string Name => Glfw.GetMonitorName(Handle);
@@ -64,7 +76,11 @@ namespace Bronze.UserInterface
         {
             get => gamma;
 
-            set => Glfw.SetGamma(Handle, value);
+            set
+            {
+                gamma = value;
+                Glfw.SetGamma(Handle, value);
+            }
         }
     }
 }

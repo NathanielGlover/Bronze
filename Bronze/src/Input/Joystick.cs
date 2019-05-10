@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Bronze.Graphics;
 using glfw3;
 
-namespace Bronze.UserInterface
+namespace Bronze.Input
 {
     public class Joystick
     {

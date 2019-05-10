@@ -31,6 +31,8 @@ namespace Bronze.Graphics
 
             Glx.IsRequired = true;
             Gl.BindAPI(new KhronosVersion(4, 1, "gl"), new Gl.Extensions());
+            
+            Monitor.SetCallbacks();
         }
 
         internal static IntPtr DefaultContext { get; }
@@ -60,8 +62,6 @@ namespace Bronze.Graphics
 
             return context;
         }
-
-        internal static Window WindowFromHandle(IntPtr handle) => (Window) GCHandle.FromIntPtr(Glfw.GetWindowUserPointer(handle)).Target;
 
         internal static void EnsureDefaultContext()
         {
