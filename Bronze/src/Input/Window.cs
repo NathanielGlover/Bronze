@@ -18,7 +18,7 @@ using OpenGL;
  Maximize callback
  Content scale callback
  All the gamepad/joystick stuff
- All the new window hints
+ All the new window hints and attributes
  */
 
 namespace Bronze.Input
@@ -35,7 +35,7 @@ namespace Bronze.Input
         Default = Resizable | Focused | Bordered | Visible
     }
 
-    public class Window
+    public class Window : IDisposable
     {
         internal static Window WindowFromHandle(IntPtr handle) => (Window) GCHandle.FromIntPtr(Glfw.GetWindowUserPointer(handle)).Target;
         
@@ -109,6 +109,9 @@ namespace Bronze.Input
             Glfw.SetWindowIconifyCallback(Handle, (ptr, minimized) => WindowFromHandle(ptr).Minimized?.Invoke(WindowFromHandle(ptr), minimized == 1));
             Glfw.SetDropCallback(Handle, (ptr, count, paths) =>
                 WindowFromHandle(ptr).FilesDropped?.Invoke(WindowFromHandle(ptr), new List<string>(paths)));
+            
+            Mouse = new Mouse(this);
+            Keyboard = new Keyboard(this);
 
             //Set OpenGL state
             Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -116,8 +119,10 @@ namespace Bronze.Input
             Gl.Enable(EnableCap.Multisample);
             Gl.Enable(EnableCap.DepthTest);
         }
-
-        ~Window() => Glfw.DestroyWindow(Handle);
+        
+        public Mouse Mouse { get; }
+        
+        public Keyboard Keyboard { get; }
 
         public ContextInfo ContextInfo => new ContextInfo(Handle);
 
@@ -240,5 +245,7 @@ namespace Bronze.Input
                 (vidmode.Height - windowSize.Y) / 2
             );
         }
+
+        public void Dispose() => Glfw.DestroyWindow(Handle);
     }
 }

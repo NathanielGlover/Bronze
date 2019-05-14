@@ -8,9 +8,9 @@
     <PropertyGroup>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
-
+    
     <ItemGroup>
-        <PackageReference Include="Glfw3.NETCore" Version="1.0.2.2" />
+        <PackageReference Include="Glfw3.NETCore" Version="1.0.2.3" />
         <PackageReference Include="OpenAL.NETCore" Version="1.0.1" />
         <PackageReference Include="OpenGL.Net" Version="0.8.4" />
         <PackageReference Include="SharpFont" Version="4.0.1" />
@@ -19,9 +19,9 @@
 
     <!--TODO: Update these packages on NuGet so that I don't have to use local versions-->
     <ItemGroup>
-      <Reference Include="libsndfile.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\RiderProjects\libsndfile.NET\libsndfile.NET\bin\Debug\netstandard2.0\libsndfile.NET.dll</HintPath>
-      </Reference>
+        <Reference Include="libsndfile.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\RiderProjects\libsndfile.NET\libsndfile.NET\bin\Debug\netstandard2.0\libsndfile.NET.dll</HintPath>
+        </Reference>
     </ItemGroup>
-    
+
 </Project>
