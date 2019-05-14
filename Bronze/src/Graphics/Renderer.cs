@@ -61,11 +61,11 @@ namespace Bronze.Graphics
             }
         }
 
-        public void Render(IDrawable drawable)
+        public void Render(IDrawable drawable, params Effect[] effects)
         {
             ContextManager.RunInSeparateContext(() =>
             {
-                drawable.Draw(Pipeline);
+                drawable.Draw(Pipeline, effects);
             }, RenderTarget.Handle);
         }
     }

@@ -48,7 +48,7 @@ namespace Bronze.Graphics
             Glfw.WindowHint(Glfw.OpenglProfile, Glfw.OpenglCoreProfile);
             Glfw.WindowHint(Glfw.OpenglForwardCompat, Glfw.True);
             Glfw.WindowHint(Glfw.Doublebuffer, Glfw.True);
-
+            
             var context = Glfw.CreateWindow(size.X, size.Y, title, IntPtr.Zero, DefaultContext);
             if(context == IntPtr.Zero) throw new NullReferenceException($"Context \"{title}\" failed to initialize.");
 

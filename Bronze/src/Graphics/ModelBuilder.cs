@@ -7,13 +7,13 @@ namespace Bronze.Graphics
 {
     public class ModelBuilder
     {
-        public ModelBuilder(int positionLocation, IVertexGenerable vertexSource)
+        public ModelBuilder(IVertexGenerable vertexSource)
         {
             Vertices = vertexSource.GenerateAroundCentroid(Vector2.Zero);
             Indices = vertexSource.GetElementIndices();
             PreferredDrawType = vertexSource.GetPreferredDrawType();
             
-            VertexArrayBuilder.AddVertexAttribute(positionLocation, Vertices);
+            VertexArrayBuilder.AddVertexAttribute(ReservedAttributes.Position, Vertices);
         }
 
         private Vertices Vertices { get; }
@@ -21,6 +21,12 @@ namespace Bronze.Graphics
         private DrawType PreferredDrawType { get; }
         
         private VertexArrayBuilder VertexArrayBuilder { get; } = new VertexArrayBuilder();
+
+        public ModelBuilder AddTextureCoordinates(Func<int, Vector3, Vector2> generator) => AddAttribute(ReservedAttributes.TextureCoordinate, generator);
+        
+        public ModelBuilder AddNormals(Func<int, Vector3, Vector2> generator) => AddAttribute(ReservedAttributes.Normal, generator);
+        
+        public ModelBuilder AddColors(Func<int, Vector3, Color> generator) => AddAttribute(ReservedAttributes.Color, generator);
 
         public ModelBuilder AddAttribute(int location, Func<int, Vector3, float> generator)
         {

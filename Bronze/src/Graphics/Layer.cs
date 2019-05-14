@@ -23,23 +23,25 @@ namespace Bronze.Graphics
                 new Vector2(1, 0)
             };
 
-            var model = new ModelBuilder(0, new Rectangle((Vector2) size * (1f / size.X)))
+            var model = new ModelBuilder(new Rectangle((Vector2) size * (1f / size.X)))
                 .AddAttribute(1, (i, vertex) => texCoords[i])
                 .BuildModel();
 
             Model = model;
         }
 
-        public override void Draw(ShaderPipeline shaderPipeline)
+        public override void Draw(ShaderPipeline pipeline, params Effect[] effects)
         {
             Framebuffer.RunActionWhileBound(() =>
             {
-                Gl.ClearColor(0.5f, 0.5f, 0.5f, 1f);
+                Gl.ClearColor(0, 0, 0, 0);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 Render?.Invoke();
             });
 
-            base.Draw(shaderPipeline);
+            foreach(var effect in effects) effect.ApplyEffect(pipeline);
+            base.Draw(pipeline);
+            foreach(var effect in effects) effect.SetDefaults(pipeline);
         }
     }
 }
